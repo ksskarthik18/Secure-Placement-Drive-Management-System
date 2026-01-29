@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="{{ url_for('admin.dashboard') }}">&larr; Back to Dashboard</a>
+<h2><i class="fas fa-th"></i> Access Control Matrix (RBAC)</h2>
+<p>This matrix defines the permissions for each role (Subject) on system resources (Objects).</p>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr style="background: #2d3436; color: white;">
+                <th>Resource / Action</th>
+                <th>Student</th>
+                <th>Company HR</th>
+                <th>Placement Officer (Admin)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>View Jobs</strong></td>
+                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
+                <td><i class="fas fa-check" style="color: green;"></i> Allow (Own)</td>
+                <td><i class="fas fa-check" style="color: green;"></i> Allow (All)</td>
+            </tr>
+            <tr>
+                <td><strong>Apply for Job</strong></td>
+                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
+                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
+                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
+            </tr>
+            <tr>
+                <td><strong>Post Job</strong></td>
+                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
+                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
+                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
+            </tr>
+            <tr>
+                <td><strong>Upload Resume</strong></td>
+                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
+                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
+                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
+            </tr>
+            <tr>
+                <td><strong>View Resumes (Decryption)</strong></td>
+                <td><i class="fas fa-times" style="color: red;"></i> Deny (Own Only - planned)</td>
+                <td><i class="fas fa-check" style="color: green;"></i> Allow (Applicants)</td>
+                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
+            </tr>
+            <tr>
+                <td><strong>Publish Result (Sign)</strong></td>
+                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
+                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
+                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
+            </tr>
+            <tr>
+                <td><strong>View Hashes / Admin Panel</strong></td>
+                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
+                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
+                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

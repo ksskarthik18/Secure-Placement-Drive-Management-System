@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row" style="display: flex; gap: 20px; flex-wrap: wrap;">
+    <!-- Profile Card -->
+    <div class="card" style="flex: 1; min-width: 300px;">
+        <h2><i class="fas fa-user-graduate"></i> Student Profile</h2>
+        <p><strong>Username:</strong> {{ current_user.username }}</p>
+        <p><strong>Email:</strong> {{ current_user.email }}</p>
+        <p><strong>Role:</strong> <span class="badge"
+                style="background: #00b894; color: white; padding: 2px 8px; border-radius: 4px;">Student</span></p>
+        <hr>
+        <a href="{{ url_for('student.upload_resume') }}" class="btn"><i class="fas fa-file-upload"></i> Upload Encrypted
+            Resume</a>
+        <br><br>
+        <a href="{{ url_for('student.view_jobs') }}" class="btn btn-secondary"><i class="fas fa-briefcase"></i> View Job
+            Openings</a>
+    </div>
+
+    <!-- Stats/applications -->
+    <div class="card" style="flex: 2; min-width: 300px;">
+        <h2><i class="fas fa-history"></i> My Applications</h2>
+        {% if current_user.placements %}
+        <div class="alert alert-success">
+            <h4><i class="fas fa-trophy"></i> Congratulations!</h4>
+            <p>You have been placed!</p>
+            {% for p in current_user.placements %}
+            <p><strong>Company:</strong> {{ p.company_name }} | <strong>Package:</strong> {{ p.package }}</p>
+            <p><small>Digital Signature Verified <i class="fas fa-check-circle"></i></small></p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <p>Check "View Jobs" to apply.</p>
+    </div>
+</div>
+{% endblock %}

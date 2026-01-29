@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="{{ url_for('admin.dashboard') }}">&larr; Back to Dashboard</a>
+<h2><i class="fas fa-hashtag"></i> User Password Hashes</h2>
+<div class="alert alert-warning">
+    <strong>Academic Demo Notice:</strong> In a real system, admins should NEVER be able to see plaintext passwords.
+    Here we show that we are storing <strong>Hashes</strong> (bcrypt) instead of plaintext.
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Stored Password Hash (bcrypt)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td><span class="badge">{{ user.role }}</span></td>
+                <td style="font-family: monospace; font-size: 0.8em; word-break: break-all; color: #d63031;">
+                    {{ user.password_hash }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

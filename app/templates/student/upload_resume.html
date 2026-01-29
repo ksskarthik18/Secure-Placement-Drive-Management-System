@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <div class="card">
+        <h2><i class="fas fa-lock"></i> Secure Resume Upload</h2>
+        <p>Your resume will be <strong>AES-256 Encrypted</strong> before storage. Only authorized HR/Admins can decrypt
+            it.</p>
+
+        <div class="alert alert-info">
+            <i class="fas fa-key"></i> <strong>Security Mechanism:</strong> Hybrid Encryption
+            <ul>
+                <li>File Data: AES-256 (CBC)</li>
+                <li>AES Key: RSA-2048 (Admin's Public Key)</li>
+            </ul>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Select Resume (PDF/DOCX/TXT)</label>
+                <input type="file" name="resume" class="form-control" required>
+            </div>
+            <button type="submit" class="btn"><i class="fas fa-upload"></i> Encrypt & Upload</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

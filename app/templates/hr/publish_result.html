@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <div class="card">
+        <h2><i class="fas fa-certificate"></i> Publish Placement Result</h2>
+        <p>You are about to publish a result for <strong>{{ student.username }}</strong>.</p>
+
+        <div class="alert alert-warning">
+            <i class="fas fa-pen-nib"></i> <strong>Security Action:</strong> Digital Signature
+            <p>The system will:</p>
+            <ol>
+                <li>Hash the placement data (SHA-256)</li>
+                <li>Sign the hash using the Admin's Private Key (RSA)</li>
+                <li>Store the signature to ensure non-repudiation.</li>
+            </ol>
+        </div>
+
+        <form method="POST">
+            <div class="form-group">
+                <label>Company Name</label>
+                <input type="text" name="company_name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Package (LPA)</label>
+                <input type="text" name="package" class="form-control" placeholder="e.g. 12 LPA" required>
+            </div>
+            <button type="submit" class="btn"><i class="fas fa-file-signature"></i> Sign & Publish</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

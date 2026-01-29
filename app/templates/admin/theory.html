@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="{{ url_for('admin.dashboard') }}">&larr; Back to Dashboard</a>
+<h2><i class="fas fa-book"></i> Security Theory & Implementation</h2>
+
+<div class="card">
+    <h3>1. Security Levels Implemented</h3>
+    <ul>
+        <li><strong>Network Level:</strong> Not applicable (Localhost), but design supports HTTPS.</li>
+        <li><strong>Application Level:</strong> RBAC, Input Validation, Session Management.</li>
+        <li><strong>Data Level:</strong> AES-256 Encryption for stored files, Salted Hashing for passwords.</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h3>2. Attacks & Countermeasures</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Attack Vector</th>
+                <th>Countermeasure Used</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Brute Force</strong></td>
+                <td>Account locking (Concept) / Strong Password Hashing (bcrypt is slow)</td>
+                <td><span class="badge" style="background: green;">Secured</span></td>
+            </tr>
+            <tr>
+                <td><strong>Replay Attack</strong></td>
+                <td>OTP with strict expiration time (Time-Based)</td>
+                <td><span class="badge" style="background: green;">Secured</span></td>
+            </tr>
+            <tr>
+                <td><strong>Man-in-the-Middle (MITM)</strong></td>
+                <td>Encrypted communication (HTTPS - Required in Prod) + E2E Encryption for Resumes</td>
+                <td><span class="badge" style="background: orange;">Partial (Local)</span></td>
+            </tr>
+            <tr>
+                <td><strong>SQL Injection</strong></td>
+                <td>Use of ORM (SQLAlchemy) prevents raw SQL queries.</td>
+                <td><span class="badge" style="background: green;">Secured</span></td>
+            </tr>
+            <tr>
+                <td><strong>Unauthorized Access</strong></td>
+                <td>Role-Based Access Control (RBAC decorators)</td>
+                <td><span class="badge" style="background: green;">Secured</span></td>
+            </tr>
+            <tr>
+                <td><strong>Data Tampering</strong></td>
+                <td>Digital Signatures (SHA-256 + RSA) for Placement Results</td>
+                <td><span class="badge" style="background: green;">Secured</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

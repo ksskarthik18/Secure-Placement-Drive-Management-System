@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row" style="display: flex; gap: 20px; flex-wrap: wrap;">
+    <!-- Profile Card -->
+    <div class="card" style="flex: 1; min-width: 300px;">
+        <h2><i class="fas fa-user-tie"></i> HR Dashboard</h2>
+        <p><strong>Username:</strong> {{ current_user.username }}</p>
+        <p><strong>Role:</strong> <span class="badge"
+                style="background: #6c5ce7; color: white; padding: 2px 8px; border-radius: 4px;">HR Manager</span></p>
+        <hr>
+        <a href="{{ url_for('hr.post_job') }}" class="btn"><i class="fas fa-plus"></i> Post New Job</a>
+    </div>
+
+    <!-- Jobs Managed -->
+    <div class="card" style="flex: 2; min-width: 300px;">
+        <h2><i class="fas fa-list-alt"></i> Posted Jobs</h2>
+        {% if not jobs %}
+        <p>You haven't posted any jobs yet.</p>
+        {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Company</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in jobs %}
+                <tr>
+                    <td>{{ job.title }}</td>
+                    <td>{{ job.company }}</td>
+                    <td>{{ job.posted_date.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <a href="{{ url_for('hr.review_applicants', job_id=job.id) }}" class="btn btn-secondary"
+                            style="font-size: 0.8rem;">Review Applicants</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

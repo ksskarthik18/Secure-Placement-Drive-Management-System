@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a href="{{ url_for('admin.dashboard') }}">&larr; Back to Dashboard</a>
+<h2><i class="fas fa-lock"></i> Encryption Demonstration</h2>
+<p>Interactive tool to demonstrate AES-256 encryption.</p>
+
+<div class="row" style="display: flex; gap: 20px;">
+    <!-- Input Form -->
+    <div class="card" style="flex: 1;">
+        <h3>Input Data</h3>
+        <form method="POST">
+            <input type="hidden" name="action" value="encrypt">
+            <div class="form-group">
+                <label>Text to Encrypt</label>
+                <textarea name="data" class="form-control" rows="5" required
+                    placeholder="Enter sensitive data here..."></textarea>
+            </div>
+            <button type="submit" class="btn">Encrypt (AES-256)</button>
+        </form>
+    </div>
+
+    <!-- Output -->
+    <div class="card" style="flex: 1;">
+        <h3>Output (Ciphertext)</h3>
+        {% if result %}
+        <div
+            style="background: #2d3436; color: #55efc4; padding: 15px; border-radius: 4px; font-family: monospace; overflow-x: auto;">
+            <p><strong>Ciphertext (Base64):</strong><br>{{ result.ciphertext }}</p>
+            <p><strong>IV (Base64):</strong><br>{{ result.iv }}</p>
+            <p><strong>Encrypted AES Key (RSA-Wrapped):</strong><br>{{ result.encrypted_aes_key[:50] }}...</p>
+        </div>
+        {% else %}
+        <p>Waiting for input...</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
