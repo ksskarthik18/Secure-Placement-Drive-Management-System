@@ -74,51 +74,7 @@
     {% endif %}
 </div>
 
-<!-- Hash Breakdown -->
-<div class="card">
-    <h3><i class="fas fa-search"></i> bcrypt Hash Structure</h3>
-    <div class="code-block" style="font-size: 14px;">
-        $2b$12$SALT_22_CHARACTERS_HEREHASH_31_CHARACTERS_HERE
-        │ │ │ │
-        │ │ │ └─ 31-character hash
-        │ │ └─ 22-character salt (unique per password)
-        │ └─ Cost factor (12 = 2^12 iterations)
-        └─ Algorithm identifier ($2b = bcrypt)
-    </div>
 
-    <div
-        style="margin-top: 1.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-        <div class="stat-card">
-            <div class="stat-icon purple">
-                <i class="fas fa-random"></i>
-            </div>
-            <div class="stat-content">
-                <h4 style="margin:0;">Salt</h4>
-                <p>Random, unique per password</p>
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-icon blue">
-                <i class="fas fa-tachometer-alt"></i>
-            </div>
-            <div class="stat-content">
-                <h4 style="margin:0;">Cost Factor</h4>
-                <p>Slows down brute-force</p>
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-icon green">
-                <i class="fas fa-arrow-right"></i>
-            </div>
-            <div class="stat-content">
-                <h4 style="margin:0;">One-Way</h4>
-                <p>Cannot be reversed</p>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Security Note -->
 <div class="alert alert-success">
