@@ -1,37 +1,144 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row" style="display: flex; gap: 20px; flex-wrap: wrap;">
-    <!-- Profile Card -->
-    <div class="card" style="flex: 1; min-width: 300px;">
-        <h2><i class="fas fa-user-graduate"></i> Student Profile</h2>
-        <p><strong>Username:</strong> {{ current_user.username }}</p>
-        <p><strong>Email:</strong> {{ current_user.email }}</p>
-        <p><strong>Role:</strong> <span class="badge"
-                style="background: #00b894; color: white; padding: 2px 8px; border-radius: 4px;">Student</span></p>
-        <hr>
-        <a href="{{ url_for('student.upload_resume') }}" class="btn"><i class="fas fa-file-upload"></i> Upload Encrypted
-            Resume</a>
-        <br><br>
-        <a href="{{ url_for('student.view_jobs') }}" class="btn btn-secondary"><i class="fas fa-briefcase"></i> View Job
-            Openings</a>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Student Dashboard</h1>
+        <p class="page-subtitle">Welcome back, {{ current_user.username }}</p>
+    </div>
+    <div class="role-badge student">
+        <i class="fas fa-user-graduate"></i> {{ current_user.role }}
+    </div>
+</div>
+
+<!-- Profile Card -->
+<div class="card slide-up">
+    <div class="flex items-center justify-between" style="flex-wrap: wrap; gap: 1rem;">
+        <div class="flex items-center gap-2">
+            <div class="stat-icon blue" style="width: 56px; height: 56px; font-size: 24px;">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <div>
+                <h3 style="margin:0; font-size: 20px;">{{ current_user.username }}</h3>
+                <p style="margin:0; font-size: 14px; color: var(--text-secondary);">{{ current_user.email }}</p>
+            </div>
+        </div>
+        <div class="flex gap-1" style="flex-wrap: wrap;">
+            {% if current_user.totp_enabled %}
+            <span class="security-badge verified">
+                <i class="fas fa-shield-alt"></i> MFA Active
+            </span>
+            {% else %}
+            <span class="badge badge-warning">
+                <i class="fas fa-exclamation-triangle"></i> MFA Pending
+            </span>
+            {% endif %}
+
+            {% if current_user.resumes|length > 0 %}
+            <span class="security-badge encrypted">
+                <i class="fas fa-lock"></i> Resume Encrypted
+            </span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+    <a href="{{ url_for('student.upload_resume') }}" class="stat-card" style="text-decoration: none; cursor: pointer;">
+        <div class="stat-icon green">
+            <i class="fas fa-file-upload"></i>
+        </div>
+        <div class="stat-content">
+            <h4 style="margin:0; font-size: 16px;">Upload Resume</h4>
+            <p style="font-size: 12px;">AES Encrypted</p>
+        </div>
+    </a>
+
+    <a href="{{ url_for('student.view_jobs') }}" class="stat-card" style="text-decoration: none; cursor: pointer;">
+        <div class="stat-icon blue">
+            <i class="fas fa-briefcase"></i>
+        </div>
+        <div class="stat-content">
+            <h4 style="margin:0; font-size: 16px;">Placement Drives</h4>
+            <p style="font-size: 12px;">View & Apply</p>
+        </div>
+    </a>
+
+    <a href="{{ url_for('student.view_applications') }}" class="stat-card"
+        style="text-decoration: none; cursor: pointer;">
+        <div class="stat-icon purple">
+            <i class="fas fa-clipboard-list"></i>
+        </div>
+        <div class="stat-content">
+            <h4 style="margin:0; font-size: 16px;">My Applications</h4>
+            <p style="font-size: 12px;">Track Status</p>
+        </div>
+    </a>
+
+    <a href="{{ url_for('student.view_results') }}" class="stat-card" style="text-decoration: none; cursor: pointer;">
+        <div class="stat-icon yellow">
+            <i class="fas fa-trophy"></i>
+        </div>
+        <div class="stat-content">
+            <h4 style="margin:0; font-size: 16px;">My Results</h4>
+            <p style="font-size: 12px;">Verified</p>
+        </div>
+    </a>
+</div>
+
+<!-- Placement Results -->
+{% if current_user.placements %}
+<div class="card" style="border-left: 4px solid var(--accent-green);">
+    <div class="card-header">
+        <h2 class="card-title"><i class="fas fa-trophy" style="color: #f59e0b;"></i> Placement Results</h2>
+        <span class="security-badge verified"><i class="fas fa-signature"></i> Digitally Signed</span>
     </div>
 
-    <!-- Stats/applications -->
-    <div class="card" style="flex: 2; min-width: 300px;">
-        <h2><i class="fas fa-history"></i> My Applications</h2>
-        {% if current_user.placements %}
-        <div class="alert alert-success">
-            <h4><i class="fas fa-trophy"></i> Congratulations!</h4>
-            <p>You have been placed!</p>
-            {% for p in current_user.placements %}
-            <p><strong>Company:</strong> {{ p.company_name }} | <strong>Package:</strong> {{ p.package }}</p>
-            <p><small>Digital Signature Verified <i class="fas fa-check-circle"></i></small></p>
-            {% endfor %}
+    {% for p in current_user.placements %}
+    <div class="alert alert-success">
+        <div style="flex: 1;">
+            <h4 style="margin: 0 0 0.5rem;"><i class="fas fa-building"></i> {{ p.company_name }}</h4>
+            <p style="margin: 0;"><strong>Package:</strong> {{ p.package }}</p>
+            <p style="margin: 0.5rem 0 0; font-size: 12px; opacity: 0.8;">
+                <i class="fas fa-calendar"></i> Published: {{ p.published_date.strftime('%d %b %Y') }}
+            </p>
         </div>
-        {% endif %}
+        <span class="badge badge-success"><i class="fas fa-check-circle"></i> Verified</span>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 
-        <p>Check "View Jobs" to apply.</p>
+<!-- Security Demo Link -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><i class="fas fa-flask"></i> Security Lab</h2>
+    </div>
+
+    <div class="quick-links">
+        <a href="{{ url_for('student.encryption_demo') }}" class="quick-link">
+            <div class="quick-link-icon" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">
+                <i class="fas fa-lock"></i>
+            </div>
+            <div class="quick-link-content">
+                <h4>Encryption Demo</h4>
+                <p>See AES encryption in action</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Security Info -->
+<div class="card" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+    <div class="flex items-center gap-2">
+        <i class="fas fa-info-circle" style="font-size: 24px;"></i>
+        <div>
+            <h4 style="margin:0;">Your Data is Protected</h4>
+            <p style="margin:4px 0 0; opacity: 0.9; font-size: 13px;">
+                Resume encrypted with AES-256 • Results verified with digital signatures • Login protected by TOTP MFA
+            </p>
+        </div>
     </div>
 </div>
 {% endblock %}

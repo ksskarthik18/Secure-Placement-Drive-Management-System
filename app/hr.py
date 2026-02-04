@@ -5,6 +5,7 @@ from app.models import Job, Application, Resume, PlacementResult, User
 from app.decorators import role_required
 from app.security import decrypt_data_aes, sign_data
 import base64
+import logging
 
 hr = Blueprint('hr', __name__)
 
@@ -13,7 +14,19 @@ hr = Blueprint('hr', __name__)
 @role_required('HR')
 def dashboard():
     my_jobs = Job.query.filter_by(hr_id=current_user.id).order_by(Job.posted_date.desc()).all()
-    return render_template('hr/dashboard.html', jobs=my_jobs)
+    
+    # Calculate application counts manually to avoid template errors
+    job_stats = []
+    total_applicants = 0
+    for job in my_jobs:
+        count = len(job.applications)
+        total_applicants += count
+        job_stats.append({
+            'job': job,
+            'count': count
+        })
+        
+    return render_template('hr/dashboard.html', jobs=my_jobs, job_stats=job_stats, total_applicants=total_applicants)
 
 @hr.route('/hr/job/post', methods=['GET', 'POST'])
 @login_required
@@ -69,12 +82,12 @@ def review_applicants(job_id):
                 except:
                     decrypted_preview = f"[Binary file - {len(file_bytes)} bytes decrypted successfully]"
                 
-                # Print to terminal for demo
-                print("=" * 50)
-                print(f"DECRYPTED RESUME for {student.username}:")
-                print(f"Filename: {resume.filename}")
-                print(f"Content Preview: {decrypted_preview[:200]}...")
-                print("=" * 50)
+                # Log to terminal
+                logging.warning("=" * 50)
+                logging.warning(f"DECRYPTED RESUME for {student.username}:")
+                logging.warning(f"Filename: {resume.filename}")
+                logging.warning(f"Content Preview: {decrypted_preview[:200]}...")
+                logging.warning("=" * 50)
                 
             except Exception as e:
                 decrypted_preview = f"[Decryption Error: {str(e)}]"
@@ -102,10 +115,10 @@ def download_resume(resume_id):
     """Download and decrypt resume (PDF/any file)"""
     resume = Resume.query.get_or_404(resume_id)
     
-    print("=" * 50)
-    print(f"DOWNLOAD REQUEST for Resume ID: {resume_id}")
-    print(f"Filename: {resume.filename}")
-    print("=" * 50)
+    logging.warning("=" * 50)
+    logging.warning(f"DOWNLOAD REQUEST for Resume ID: {resume_id}")
+    logging.warning(f"Filename: {resume.filename}")
+    logging.warning("=" * 50)
     
     # SECURITY: Decrypting the resume for authorized HR
     enc_data = {

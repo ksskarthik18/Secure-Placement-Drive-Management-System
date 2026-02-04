@@ -1,33 +1,129 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<a href="{{ url_for('admin.dashboard') }}">&larr; Back to Dashboard</a>
-<h2><i class="fas fa-hashtag"></i> User Password Hashes</h2>
-<div class="alert alert-warning">
-    <strong>Academic Demo Notice:</strong> In a real system, admins should NEVER be able to see plaintext passwords.
-    Here we show that we are storing <strong>Hashes</strong> (bcrypt) instead of plaintext.
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-hashtag"></i> Password Hashes</h1>
+        <p class="page-subtitle">View bcrypt hashed passwords (no plaintext stored)</p>
+    </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
 </div>
 
+<!-- Theory Card -->
+<div class="card" style="border-left: 4px solid var(--accent-purple);">
+    <h3><i class="fas fa-lightbulb"></i> About Password Hashing</h3>
+    <p style="color: var(--text-secondary); margin: 0.5rem 0;">
+        Passwords are <strong>never stored in plaintext</strong>. We use <strong>bcrypt</strong>, a password hashing
+        function designed
+        to be slow and resistant to brute-force attacks. Each password has a unique <strong>salt</strong> embedded in
+        the hash.
+    </p>
+    <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+        <span class="security-badge hashed"><i class="fas fa-check"></i> Salted</span>
+        <span class="security-badge hashed"><i class="fas fa-check"></i> One-Way</span>
+        <span class="security-badge hashed"><i class="fas fa-check"></i> Slow by Design</span>
+    </div>
+</div>
+
+<!-- Hash Table -->
 <div class="card">
-    <table>
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>Role</th>
-                <th>Stored Password Hash (bcrypt)</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.username }}</td>
-                <td><span class="badge">{{ user.role }}</span></td>
-                <td style="font-family: monospace; font-size: 0.8em; word-break: break-all; color: #d63031;">
-                    {{ user.password_hash }}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="card-header">
+        <h2 class="card-title">User Password Hashes</h2>
+        <span class="badge badge-success">{{ users|length }} users</span>
+    </div>
+
+    {% if users %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Password Hash (bcrypt)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td><code>#{{ user.id }}</code></td>
+                    <td><strong>{{ user.username }}</strong></td>
+                    <td>
+                        <span
+                            class="badge badge-{% if user.role == 'Admin' %}danger{% elif user.role == 'HR' %}primary{% else %}info{% endif %}">
+                            {{ user.role }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="hash-display" style="max-width: 400px; overflow-x: auto;">
+                            {{ user.password_hash }}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-users"></i>
+        <h3>No users registered</h3>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Hash Breakdown -->
+<div class="card">
+    <h3><i class="fas fa-search"></i> bcrypt Hash Structure</h3>
+    <div class="code-block" style="font-size: 14px;">
+        $2b$12$SALT_22_CHARACTERS_HEREHASH_31_CHARACTERS_HERE
+        │ │ │ │
+        │ │ │ └─ 31-character hash
+        │ │ └─ 22-character salt (unique per password)
+        │ └─ Cost factor (12 = 2^12 iterations)
+        └─ Algorithm identifier ($2b = bcrypt)
+    </div>
+
+    <div
+        style="margin-top: 1.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="fas fa-random"></i>
+            </div>
+            <div class="stat-content">
+                <h4 style="margin:0;">Salt</h4>
+                <p>Random, unique per password</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="fas fa-tachometer-alt"></i>
+            </div>
+            <div class="stat-content">
+                <h4 style="margin:0;">Cost Factor</h4>
+                <p>Slows down brute-force</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+            <div class="stat-content">
+                <h4 style="margin:0;">One-Way</h4>
+                <p>Cannot be reversed</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Security Note -->
+<div class="alert alert-success">
+    <i class="fas fa-shield-alt"></i>
+    <strong>Security Guarantee:</strong> Even if the database is compromised, attackers cannot recover the original
+    passwords from these hashes.
 </div>
 {% endblock %}

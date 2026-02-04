@@ -9,6 +9,10 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128), nullable=False)
     role = db.Column(db.String(20), nullable=False) # 'Student', 'HR', 'Admin'
     
+    # TOTP (MFA) Fields - MANDATORY FOR LAB
+    totp_secret = db.Column(db.String(32), nullable=True)  # Base32 secret for TOTP
+    totp_enabled = db.Column(db.Boolean, default=False)    # Whether TOTP is set up
+    
     # Relationships
     resumes = db.relationship('Resume', backref='owner', lazy=True)
     jobs = db.relationship('Job', backref='author', lazy=True)

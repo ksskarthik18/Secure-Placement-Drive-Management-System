@@ -4,29 +4,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Placement Drive</title>
+    <meta name="description"
+        content="Secure Placement Drive Management System - A cyber security demonstration platform">
+    <title>Secure Placement Drive | SPDMS</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <!-- Add FontAwesome for icons -->
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
     <nav class="navbar">
-        <a href="{{ url_for('main.home') }}" class="brand">SPDMS <i class="fas fa-shield-alt"></i></a>
+        <a href="{{ url_for('main.home') }}" class="brand">
+            <i class="fas fa-shield-alt"></i> SPDMS
+        </a>
         <div class="nav-links">
-            <a href="#" id="theme-toggle"><i class="fas fa-moon"></i></a>
+            <a href="#" id="theme-toggle" title="Toggle Dark/Light Mode">
+                <i class="fas fa-moon"></i>
+            </a>
+
             {% if current_user.is_authenticated %}
             {% if current_user.role == 'Admin' %}
-            <a href="{{ url_for('admin.dashboard') }}">Admin</a>
+            <a href="{{ url_for('admin.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="{{ url_for('admin.view_hashes') }}"><i class="fas fa-hashtag"></i> Hashes</a>
+            <a href="{{ url_for('admin.rbac_matrix') }}"><i class="fas fa-th"></i> RBAC</a>
             {% elif current_user.role == 'HR' %}
-            <a href="{{ url_for('hr.dashboard') }}">HR</a>
+            <a href="{{ url_for('hr.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="{{ url_for('hr.post_job') }}"><i class="fas fa-plus"></i> Post Job</a>
             {% else %}
-            <a href="{{ url_for('student.dashboard') }}">Student</a>
+            <a href="{{ url_for('student.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="{{ url_for('student.view_jobs') }}"><i class="fas fa-briefcase"></i> Jobs</a>
             {% endif %}
-            <a href="{{ url_for('auth.logout') }}">Logout</a>
+
+            <a href="{{ url_for('auth.logout') }}" style="color: #ef4444;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
             {% else %}
-            <a href="{{ url_for('auth.login') }}">Login</a>
-            <a href="{{ url_for('auth.register') }}">Register</a>
+            <a href="{{ url_for('auth.login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a href="{{ url_for('auth.register') }}"><i class="fas fa-user-plus"></i> Register</a>
             {% endif %}
         </div>
     </nav>
@@ -35,7 +53,16 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">
+        <div class="alert alert-{{ category }} fade-in">
+            {% if category == 'success' %}
+            <i class="fas fa-check-circle"></i>
+            {% elif category == 'danger' %}
+            <i class="fas fa-exclamation-circle"></i>
+            {% elif category == 'warning' %}
+            <i class="fas fa-exclamation-triangle"></i>
+            {% else %}
+            <i class="fas fa-info-circle"></i>
+            {% endif %}
             {{ message }}
         </div>
         {% endfor %}
@@ -44,6 +71,13 @@
 
         {% block content %}{% endblock %}
     </div>
+
+    <!-- Footer -->
+    <footer
+        style="text-align: center; padding: 2rem; color: var(--text-muted); font-size: 13px; border-top: 1px solid var(--border-color); margin-top: 2rem;">
+        <p><i class="fas fa-shield-alt"></i> Secure Placement Drive Management System</p>
+        <p style="margin-top: 0.5rem;">Cyber Security Lab Project | CSE313</p>
+    </footer>
 
     <!-- Theme Toggle Script -->
     <script>
@@ -58,7 +92,8 @@
             icon.classList.add('fa-sun');
         }
 
-        toggle.addEventListener('click', () => {
+        toggle.addEventListener('click', (e) => {
+            e.preventDefault();
             if (body.hasAttribute('data-theme')) {
                 body.removeAttribute('data-theme');
                 localStorage.setItem('theme', 'light');

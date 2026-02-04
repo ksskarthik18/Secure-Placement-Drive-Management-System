@@ -123,32 +123,35 @@ def verify_signature(data: str, signature_b64: str) -> bool:
         return False
 
 # -------------------------------------------------------------
-# 4. OTP (Time-based simulation)
+# 4. TOTP (Time-based One-Time Password) - Google Authenticator
 # -------------------------------------------------------------
-OTP_STORAGE = {} # In-memory storage for demo: {user_email: {'code': '123456', 'expiry': timestamp}}
+import pyotp
 
-def generate_otp(email: str, validity_seconds=300) -> str:
-    """Generates a 6-digit OTP and stores it."""
-    otp_code = f"{secrets.randbelow(1000000):06d}" # Secure random
-    expiry = time.time() + validity_seconds
-    OTP_STORAGE[email] = {'code': otp_code, 'expiry': expiry}
-    return otp_code
+def generate_totp_secret() -> str:
+    """Generate a new TOTP secret for a user."""
+    return pyotp.random_base32()
 
-def verify_otp(email: str, input_otp: str) -> bool:
-    """Verifies OTP and checks expiration."""
-    record = OTP_STORAGE.get(email)
-    if not record:
+def get_totp_uri(secret: str, email: str, issuer: str = "SecurePlacementDrive") -> str:
+    """Generate the URI for QR code (compatible with Google Authenticator)."""
+    totp = pyotp.TOTP(secret)
+    return totp.provisioning_uri(name=email, issuer_name=issuer)
+
+def get_current_totp(secret: str) -> str:
+    """Get the current TOTP code (for demo/terminal display)."""
+    totp = pyotp.TOTP(secret)
+    return totp.now()
+
+def verify_totp(secret: str, code: str) -> bool:
+    """Verify a TOTP code against the secret."""
+    if not secret or not code:
         return False
-    
-    if time.time() > record['expiry']:
-        del OTP_STORAGE[email] # Expired
-        return False
-        
-    if record['code'] == input_otp:
-        del OTP_STORAGE[email] # Use once
-        return True
-        
-    return False
+    totp = pyotp.TOTP(secret)
+    return totp.verify(code)
+
+def generate_totp_qr(secret: str, email: str) -> str:
+    """Generate QR code image as base64 for TOTP setup."""
+    uri = get_totp_uri(secret, email)
+    return generate_qr_base64(uri)
 
 # -------------------------------------------------------------
 # 5. ENCODING (QR Code)

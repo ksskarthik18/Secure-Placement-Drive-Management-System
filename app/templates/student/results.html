@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-trophy"></i> Placement Results</h1>
+        <p class="page-subtitle">Your verified placement results with digital signatures</p>
+    </div>
+    <a href="{{ url_for('student.dashboard') }}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
+
+{% if results %}
+{% for result in results %}
+<div class="card slide-up"
+    style="border-left: 4px solid {% if result.is_valid %}var(--accent-green){% else %}var(--accent-red){% endif %};">
+    <div class="flex items-center justify-between" style="flex-wrap: wrap; gap: 1rem;">
+        <div style="flex: 1;">
+            <div class="flex items-center gap-1 mb-1">
+                <i class="fas fa-building" style="color: var(--primary-500);"></i>
+                <h2 style="margin: 0; font-size: 1.5rem;">{{ result.company }}</h2>
+            </div>
+            <p style="font-size: 1.25rem; color: var(--accent-green); font-weight: 600;">
+                <i class="fas fa-rupee-sign"></i> {{ result.package }}
+            </p>
+            <p style="font-size: 13px; color: var(--text-secondary);">
+                <i class="fas fa-calendar"></i> Published: {{ result.published_date.strftime('%d %b %Y, %I:%M %p') }}
+            </p>
+        </div>
+
+        <div style="text-align: center;">
+            <!-- QR Code -->
+            <div style="background: white; padding: 10px; border-radius: 8px; display: inline-block;">
+                <img src="data:image/png;base64,{{ result.qr_code }}" alt="Verification QR"
+                    style="width: 100px; height: 100px;">
+            </div>
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Scan to Verify</p>
+        </div>
+    </div>
+
+    <hr style="border-color: var(--border-color); margin: 1.5rem 0;">
+
+    <!-- Digital Signature Verification -->
+    <div class="flex items-center justify-between" style="flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h4 style="margin: 0 0 0.5rem;"><i class="fas fa-signature"></i> Digital Signature Status</h4>
+            {% if result.is_valid %}
+            <span class="security-badge verified">
+                <i class="fas fa-check-circle"></i> SIGNATURE VALID - Authentic Result
+            </span>
+            {% else %}
+            <span class="security-badge invalid">
+                <i class="fas fa-exclamation-triangle"></i> SIGNATURE INVALID - Data May Be Tampered
+            </span>
+            {% endif %}
+        </div>
+
+        <div>
+            <button class="btn btn-sm btn-outline" onclick="toggleHash({{ result.id }})">
+                <i class="fas fa-eye"></i> View Hash
+            </button>
+        </div>
+    </div>
+
+    <!-- Hash Details (Hidden by default) -->
+    <div id="hash-{{ result.id }}" style="display: none; margin-top: 1rem;">
+        <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px;">
+            <p style="margin: 0 0 0.5rem; font-size: 12px; color: var(--text-secondary);"><strong>SHA-256 Data
+                    Hash:</strong></p>
+            <code class="hash-display">{{ result.data_hash }}</code>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+    function toggleHash(id) {
+        const el = document.getElementById('hash-' + id);
+        el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+
+{% else %}
+<div class="card">
+    <div class="empty-state">
+        <i class="fas fa-award"></i>
+        <h3>No Results Yet</h3>
+        <p>Your placement results will appear here once published by HR.</p>
+        <a href="{{ url_for('student.view_jobs') }}" class="btn btn-primary mt-2">
+            <i class="fas fa-briefcase"></i> Apply to Jobs
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<!-- Security Info -->
+<div class="card" style="border-left: 4px solid var(--accent-blue);">
+    <h4><i class="fas fa-info-circle"></i> About Digital Signatures</h4>
+    <p style="color: var(--text-secondary); font-size: 14px; margin: 0.5rem 0 0;">
+        Each result is cryptographically signed using <strong>RSA-2048</strong> with a <strong>SHA-256</strong> hash.
+        This ensures the result has not been tampered with and was published by an authorized HR.
+        If data is modified, the signature verification will FAIL.
+    </p>
+</div>
+{% endblock %}

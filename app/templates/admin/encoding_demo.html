@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-qrcode"></i> Encoding Demonstration</h1>
+        <p class="page-subtitle">Understanding the difference between Encoding and Encryption</p>
+    </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
+
+<!-- Theory Section -->
+<div class="card" style="border-left: 4px solid var(--accent-yellow);">
+    <h3><i class="fas fa-lightbulb"></i> Key Concept: Encoding ≠ Encryption</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem;">
+        <div>
+            <h4 style="color: var(--accent-yellow);"><i class="fas fa-exchange-alt"></i> Encoding</h4>
+            <ul style="color: var(--text-secondary); padding-left: 1.5rem;">
+                <li>Transforms data to another format</li>
+                <li><strong>No key required</strong> to reverse</li>
+                <li>Purpose: Data representation, not security</li>
+                <li>Examples: Base64, URL encoding, QR codes</li>
+            </ul>
+        </div>
+        <div>
+            <h4 style="color: var(--accent-green);"><i class="fas fa-lock"></i> Encryption</h4>
+            <ul style="color: var(--text-secondary); padding-left: 1.5rem;">
+                <li>Transforms data to hide its meaning</li>
+                <li><strong>Key required</strong> to decrypt</li>
+                <li>Purpose: Confidentiality and security</li>
+                <li>Examples: AES, RSA, ChaCha20</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Interactive Demo -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><i class="fas fa-flask"></i> Interactive Demo</h2>
+    </div>
+
+    <form method="POST">
+        <div class="form-group">
+            <label for="data"><i class="fas fa-keyboard"></i> Enter Text to Encode/Encrypt:</label>
+            <input type="text" id="data" name="data" class="form-control"
+                placeholder="e.g., Student ID: 12345, Interview at 10 AM"
+                value="{{ result.original if result else '' }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-cogs"></i> Process Data
+        </button>
+    </form>
+</div>
+
+{% if result %}
+<!-- Results -->
+<div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
+
+    <!-- Encoding Results -->
+    <div class="card" style="border-top: 4px solid var(--accent-yellow);">
+        <h3 style="color: var(--accent-yellow);"><i class="fas fa-exchange-alt"></i> Encoding Results</h3>
+
+        <div class="form-group">
+            <label>Original Text:</label>
+            <div class="code-block">{{ result.original }}</div>
+        </div>
+
+        <div class="form-group">
+            <label><span class="badge badge-warning">Base64 Encoded</span></label>
+            <div class="code-block" style="word-break: break-all;">{{ result.base64_encoded }}</div>
+        </div>
+
+        <div class="form-group">
+            <label>Base64 Decoded (No Key Needed!):</label>
+            <div class="code-block">{{ result.base64_decoded }}</div>
+        </div>
+
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Notice:</strong> Base64 can be decoded by anyone. It's NOT secure!
+        </div>
+
+        <hr style="border-color: var(--border-color);">
+
+        <h4><i class="fas fa-qrcode"></i> QR Code Encoding</h4>
+        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 1rem;">
+            QR codes encode data visually. Scan with any QR app to read.
+        </p>
+        <div style="text-align: center; padding: 1rem; background: white; border-radius: 8px; display: inline-block;">
+            <img src="data:image/png;base64,{{ result.qr_code }}" alt="QR Code" style="width: 150px;">
+        </div>
+    </div>
+
+    <!-- Encryption Results -->
+    <div class="card" style="border-top: 4px solid var(--accent-green);">
+        <h3 style="color: var(--accent-green);"><i class="fas fa-lock"></i> Encryption Results</h3>
+
+        <div class="form-group">
+            <label>Original Text:</label>
+            <div class="code-block">{{ result.original }}</div>
+        </div>
+
+        <div class="form-group">
+            <label><span class="security-badge encrypted"><i class="fas fa-lock"></i> AES-256 Encrypted</span></label>
+            <div class="code-block" style="word-break: break-all; font-size: 11px;">{{ result.aes_encrypted }}</div>
+        </div>
+
+        <div class="alert alert-success">
+            <i class="fas fa-shield-alt"></i>
+            <strong>Secure:</strong> This ciphertext CANNOT be decrypted without the private RSA key!
+        </div>
+
+        <hr style="border-color: var(--border-color);">
+
+        <h4><i class="fas fa-key"></i> Key Management</h4>
+        <p style="color: var(--text-secondary); font-size: 14px;">
+            Our system uses <strong>Hybrid Encryption</strong>:
+        </p>
+        <ul style="color: var(--text-secondary); font-size: 14px; padding-left: 1.5rem;">
+            <li>Data encrypted with random <strong>AES-256 key</strong></li>
+            <li>AES key encrypted with <strong>RSA-2048 public key</strong></li>
+            <li>Only the server's <strong>private RSA key</strong> can decrypt</li>
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+<!-- Summary Table -->
+<div class="card">
+    <h3><i class="fas fa-table"></i> Comparison Summary</h3>
+    <div class="table-container">
+        <table class="matrix-table">
+            <thead>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Encoding</th>
+                    <th>Encryption</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>Purpose</th>
+                    <td>Data representation</td>
+                    <td>Data protection</td>
+                </tr>
+                <tr>
+                    <th>Reversible By</th>
+                    <td class="permission-no">Anyone (no key)</td>
+                    <td class="permission-yes">Key holder only</td>
+                </tr>
+                <tr>
+                    <th>Security</th>
+                    <td class="permission-no">None</td>
+                    <td class="permission-yes">High</td>
+                </tr>
+                <tr>
+                    <th>Use Case</th>
+                    <td>URLs, Data transfer</td>
+                    <td>Passwords, Resumes, Secrets</td>
+                </tr>
+                <tr>
+                    <th>Example</th>
+                    <td>Base64, QR, URL encoding</td>
+                    <td>AES, RSA, ChaCha20</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

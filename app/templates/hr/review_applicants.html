@@ -1,50 +1,121 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Applicants for: {{ job.title }}</h2>
-<a href="{{ url_for('hr.dashboard') }}">&larr; Back to Dashboard</a>
-<br><br>
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-users"></i> Review Applicants</h1>
+        <p class="page-subtitle">{{ job.title }} at {{ job.company }}</p>
+    </div>
+    <a href="{{ url_for('hr.dashboard') }}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
 
-{% if not applicants %}
-<p>No applicants yet.</p>
-{% else %}
-<div style="display: flex; flex-direction: column; gap: 20px;">
+<!-- Stats -->
+<div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 2rem;">
+    <div class="stat-card">
+        <div class="stat-icon blue">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ applicants|length }}</h3>
+            <p>Total Applicants</p>
+        </div>
+    </div>
+</div>
+
+{% if applicants %}
+<!-- Applicant Cards -->
+<div style="display: flex; flex-direction: column; gap: 1.5rem;">
     {% for app in applicants %}
-    <div class="card">
-        <h3>Student: {{ app.student_name }}</h3>
-        <p><strong>Status:</strong> {{ app.status }}</p>
-
-        <div
-            style="background: #f1f2f6; padding: 15px; border-radius: 8px; border-left: 5px solid #00b894; margin-bottom: 15px;">
-            <h4><i class="fas fa-file-alt"></i> Resume (Encrypted Storage)</h4>
-            {% if app.resume %}
-            <p><strong>Filename:</strong> {{ app.resume.filename }}</p>
-
-            <!-- Decrypted Preview Box -->
-            <div
-                style="background: #2d3436; color: #55efc4; padding: 15px; border-radius: 8px; margin: 10px 0; font-family: monospace;">
-                <h5 style="color: #ffeaa7; margin-top: 0;"><i class="fas fa-unlock"></i> DECRYPTED CONTENT:</h5>
-                <pre
-                    style="white-space: pre-wrap; word-break: break-all; color: #dfe6e9; margin: 0;">{{ app.decrypted_preview }}</pre>
+    <div class="card slide-up"
+        style="border-left: 4px solid {% if app.status == 'Placed' %}var(--accent-green){% else %}var(--primary-500){% endif %};">
+        <div class="flex items-center justify-between" style="flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+            <div class="flex items-center gap-2">
+                <div class="stat-icon blue" style="width: 48px; height: 48px; font-size: 18px;">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div>
+                    <h3 style="margin: 0;">{{ app.student_name }}</h3>
+                    <p style="margin: 0; font-size: 13px; color: var(--text-secondary);">{{ app.student_email }}</p>
+                </div>
             </div>
 
-            <a href="{{ url_for('hr.download_resume', resume_id=app.resume.id) }}" class="btn"
-                style="background: #00b894;">
+            <div class="flex gap-1">
+                <span
+                    class="badge badge-{% if app.status == 'Applied' %}info{% elif app.status == 'Shortlisted' %}success{% elif app.status == 'Placed' %}success{% else %}warning{% endif %}">
+                    {{ app.status }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Resume Section -->
+        <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem;">
+            <div class="flex items-center justify-between" style="margin-bottom: 1rem;">
+                <h4 style="margin: 0;"><i class="fas fa-file-alt"></i> Resume</h4>
+                {% if app.resume %}
+                <span class="security-badge encrypted"><i class="fas fa-lock"></i> Encrypted</span>
+                {% endif %}
+            </div>
+
+            {% if app.resume %}
+            <p style="margin: 0 0 1rem; font-size: 14px; color: var(--text-secondary);">
+                <i class="fas fa-paperclip"></i> {{ app.resume.filename }}
+            </p>
+
+            <!-- Decrypted Preview -->
+            <div style="background: #1e1e1e; color: #10b981; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.5rem;">
+                    <i class="fas fa-unlock" style="color: #f59e0b;"></i>
+                    <span style="color: #f59e0b; font-size: 12px; font-weight: 600;">DECRYPTED CONTENT:</span>
+                </div>
+                <pre
+                    style="margin: 0; white-space: pre-wrap; word-break: break-all; font-size: 12px; color: #e2e8f0;">{{ app.decrypted_preview }}</pre>
+            </div>
+
+            <a href="{{ url_for('hr.download_resume', resume_id=app.resume.id) }}" class="btn btn-sm btn-success">
                 <i class="fas fa-download"></i> Download Decrypted File
             </a>
             {% else %}
-            <p style="color: #d63031;"><i class="fas fa-exclamation-triangle"></i> No resume uploaded by this student.
-            </p>
+            <div class="alert alert-warning" style="padding: 0.75rem;">
+                <i class="fas fa-exclamation-triangle"></i>
+                No resume uploaded by this student.
+            </div>
             {% endif %}
         </div>
 
-        {% if app.status != 'Placed' %}
-        <a href="{{ url_for('hr.publish_result', student_id=app.student_id) }}" class="btn">Select & Publish Result</a>
-        {% else %}
-        <button class="btn btn-secondary" disabled>Already Placed</button>
-        {% endif %}
+        <!-- Actions -->
+        <div class="flex gap-1" style="flex-wrap: wrap;">
+            {% if app.status != 'Placed' %}
+            <a href="{{ url_for('hr.publish_result', student_id=app.student_id) }}" class="btn btn-primary">
+                <i class="fas fa-trophy"></i> Select & Publish Result
+            </a>
+            {% else %}
+            <button class="btn btn-outline" disabled style="opacity: 0.6;">
+                <i class="fas fa-check-circle"></i> Already Placed
+            </button>
+            {% endif %}
+        </div>
     </div>
     {% endfor %}
 </div>
+
+{% else %}
+<div class="card">
+    <div class="empty-state">
+        <i class="fas fa-user-friends"></i>
+        <h3>No Applicants Yet</h3>
+        <p>Students will appear here after they apply for this position.</p>
+    </div>
+</div>
 {% endif %}
+
+<!-- Security Info -->
+<div class="card" style="margin-top: 2rem; border-left: 4px solid var(--accent-green);">
+    <h4><i class="fas fa-shield-alt"></i> Security Note</h4>
+    <p style="color: var(--text-secondary); font-size: 14px; margin: 0.5rem 0 0;">
+        Resume decryption uses the server's <strong>RSA private key</strong> to decrypt the AES key,
+        which then decrypts the resume content. This ensures only authorized personnel can access the data.
+    </p>
+</div>
 {% endblock %}

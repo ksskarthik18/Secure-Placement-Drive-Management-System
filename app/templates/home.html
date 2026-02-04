@@ -1,202 +1,236 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="hero-section">
-    <div class="hero-icons">
-        <i class="fas fa-shield-alt hero-icon"></i>
-        <i class="fas fa-lock hero-icon-main"></i>
-        <i class="fas fa-user-graduate hero-icon"></i>
+<!-- Hero Section -->
+<div class="hero-section fade-in"
+    style="text-align: center; padding: 6rem 2rem; position: relative; overflow: hidden; background-color: var(--bg-body);">
+
+    <!-- Professional Grid Background -->
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+        background-image: linear-gradient(var(--border-color) 1px, transparent 1px), linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+        background-size: 40px 40px; opacity: 0.4;">
     </div>
 
-    <h1 class="hero-title">Secure Placement Drive</h1>
-    <h2 class="hero-subtitle">Management System</h2>
+    <!-- Subtle Gradient Overlay -->
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+        background: radial-gradient(circle at 50% 50%, transparent 0%, var(--bg-body) 80%);">
+    </div>
 
-    <p class="hero-description">
-        A comprehensive platform for managing campus placement drives with
-        <strong>enterprise-grade security</strong> features.
+    <div class="hero-badge"
+        style="display: inline-flex; align-items: center; gap: 8px; background: rgba(37, 99, 235, 0.1); color: var(--accent-color); padding: 8px 16px; border-radius: 99px; font-size: 0.85rem; font-weight: 600; margin-bottom: 2rem; border: 1px solid rgba(37, 99, 235, 0.2);">
+        <i class="fas fa-shield-alt"></i>
+        Cyber Security Lab Project
+    </div>
+
+    <h1 style="font-size: 3rem; font-weight: 700; margin-bottom: 1rem; line-height: 1.2;">
+        Secure Placement Drive<br>
+        <span
+            style="background: linear-gradient(135deg, var(--primary-500), #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Management
+            System</span>
+    </h1>
+
+    <p style="font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 2rem;">
+        A comprehensive demonstration of Authentication, Authorization, Encryption,
+        Hashing, Digital Signatures, and Secure UI/UX principles.
     </p>
 
-    <div class="hero-features">
-        <div class="feature-card">
-            <i class="fas fa-key"></i>
-            <h4>MFA Authentication</h4>
-            <p>OTP-based Multi-Factor Authentication</p>
-        </div>
-        <div class="feature-card">
-            <i class="fas fa-lock"></i>
-            <h4>AES-256 Encryption</h4>
-            <p>Resume data encrypted at rest</p>
-        </div>
-        <div class="feature-card">
-            <i class="fas fa-file-signature"></i>
-            <h4>Digital Signatures</h4>
-            <p>Tamper-proof placement results</p>
-        </div>
-        <div class="feature-card">
-            <i class="fas fa-users-cog"></i>
-            <h4>RBAC Access Control</h4>
-            <p>Role-based permissions</p>
-        </div>
-    </div>
-
-    <div class="hero-cta">
-        <a href="{{ url_for('auth.login') }}" class="btn btn-lg">
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        {% if current_user.is_authenticated %}
+        {% if current_user.role == 'Admin' %}
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 16px;">
+            <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+        </a>
+        {% elif current_user.role == 'HR' %}
+        <a href="{{ url_for('hr.dashboard') }}" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 16px;">
+            <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+        </a>
+        {% else %}
+        <a href="{{ url_for('student.dashboard') }}" class="btn btn-primary"
+            style="padding: 1rem 2rem; font-size: 16px;">
+            <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+        </a>
+        {% endif %}
+        {% else %}
+        <a href="{{ url_for('auth.login') }}" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 16px;">
             <i class="fas fa-sign-in-alt"></i> Login
         </a>
-        <a href="{{ url_for('auth.register') }}" class="btn btn-secondary btn-lg">
+        <a href="{{ url_for('auth.register') }}" class="btn btn-outline" style="padding: 1rem 2rem; font-size: 16px;">
             <i class="fas fa-user-plus"></i> Register
         </a>
-    </div>
-
-    <div class="hero-roles">
-        <span class="role-badge student"><i class="fas fa-user-graduate"></i> Student</span>
-        <span class="role-badge hr"><i class="fas fa-briefcase"></i> Company HR</span>
-        <span class="role-badge admin"><i class="fas fa-user-shield"></i> Admin</span>
+        {% endif %}
     </div>
 </div>
 
-<style>
-    .hero-section {
-        text-align: center;
-        padding: 40px 20px;
-        min-height: 70vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
+<!-- Security Features Grid -->
+<div class="stats-grid slide-up" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-top: 2rem;">
+    <div class="card" style="text-align: center; border-top: 4px solid #3b82f6;">
+        <div class="stat-icon blue" style="width: 60px; height: 60px; font-size: 24px; margin: 0 auto 1rem;">
+            <i class="fas fa-user-lock"></i>
+        </div>
+        <h3>Authentication</h3>
+        <p style="color: var(--text-secondary); font-size: 14px;">
+            Password-based login with bcrypt hashing and TOTP-based Multi-Factor Authentication (Google Authenticator)
+        </p>
+        <div style="margin-top: 1rem;">
+            <span class="badge badge-primary">bcrypt</span>
+            <span class="badge badge-success">TOTP MFA</span>
+        </div>
+    </div>
 
-    .hero-icons {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 30px;
-        margin-bottom: 20px;
-    }
+    <div class="card" style="text-align: center; border-top: 4px solid #8b5cf6;">
+        <div class="stat-icon purple" style="width: 60px; height: 60px; font-size: 24px; margin: 0 auto 1rem;">
+            <i class="fas fa-user-shield"></i>
+        </div>
+        <h3>Authorization</h3>
+        <p style="color: var(--text-secondary); font-size: 14px;">
+            Role-Based Access Control (RBAC) with Student, HR, and Admin roles. Access Control Matrix enforcement.
+        </p>
+        <div style="margin-top: 1rem;">
+            <span class="badge badge-info">Student</span>
+            <span class="badge badge-primary">HR</span>
+            <span class="badge badge-danger">Admin</span>
+        </div>
+    </div>
 
-    .hero-icon {
-        font-size: 3rem;
-        color: var(--primary-color);
-        opacity: 0.7;
-    }
+    <div class="card" style="text-align: center; border-top: 4px solid #10b981;">
+        <div class="stat-icon green" style="width: 60px; height: 60px; font-size: 24px; margin: 0 auto 1rem;">
+            <i class="fas fa-lock"></i>
+        </div>
+        <h3>Encryption</h3>
+        <p style="color: var(--text-secondary); font-size: 14px;">
+            Hybrid encryption using AES-256 for data and RSA-2048 for key exchange. Resumes encrypted at rest.
+        </p>
+        <div style="margin-top: 1rem;">
+            <span class="badge badge-success">AES-256</span>
+            <span class="badge badge-primary">RSA-2048</span>
+        </div>
+    </div>
 
-    .hero-icon-main {
-        font-size: 5rem;
-        color: var(--accent-color);
-        animation: pulse 2s infinite;
-    }
+    <div class="card" style="text-align: center; border-top: 4px solid #f59e0b;">
+        <div class="stat-icon yellow" style="width: 60px; height: 60px; font-size: 24px; margin: 0 auto 1rem;">
+            <i class="fas fa-signature"></i>
+        </div>
+        <h3>Digital Signatures</h3>
+        <p style="color: var(--text-secondary); font-size: 14px;">
+            Placement results are digitally signed using RSA with SHA-256 hashing for integrity verification.
+        </p>
+        <div style="margin-top: 1rem;">
+            <span class="badge badge-warning">SHA-256</span>
+            <span class="badge badge-primary">RSA Sig</span>
+        </div>
+    </div>
 
-    @keyframes pulse {
+    <div class="card" style="text-align: center; border-top: 4px solid #ec4899;">
+        <div class="stat-icon"
+            style="width: 60px; height: 60px; font-size: 24px; margin: 0 auto 1rem; background: rgba(236, 72, 153, 0.15); color: #ec4899;">
+            <i class="fas fa-qrcode"></i>
+        </div>
+        <h3>Encoding</h3>
+        <p style="color: var(--text-secondary); font-size: 14px;">
+            QR code generation for verification. Clear distinction between encoding (reversible) and encryption
+            (secure).
+        </p>
+        <div style="margin-top: 1rem;">
+            <span class="badge badge-info">QR Code</span>
+            <span class="badge badge-warning">Base64</span>
+        </div>
+    </div>
 
-        0%,
-        100% {
-            transform: scale(1);
-        }
+    <div class="card" style="text-align: center; border-top: 4px solid #6366f1;">
+        <div class="stat-icon"
+            style="width: 60px; height: 60px; font-size: 24px; margin: 0 auto 1rem; background: rgba(99, 102, 241, 0.15); color: #6366f1;">
+            <i class="fas fa-palette"></i>
+        </div>
+        <h3>Secure UI/UX</h3>
+        <p style="color: var(--text-secondary); font-size: 14px;">
+            Modern, responsive design with dark/light themes, smooth animations, and clear security indicators.
+        </p>
+        <div style="margin-top: 1rem;">
+            <span class="badge badge-primary">Dark Mode</span>
+            <span class="badge badge-success">Responsive</span>
+        </div>
+    </div>
+</div>
 
-        50% {
-            transform: scale(1.1);
-        }
-    }
+<!-- Roles Section -->
+<div class="card slide-up" style="margin-top: 2rem;">
+    <div class="card-header">
+        <h2 class="card-title"><i class="fas fa-users"></i> System Roles</h2>
+    </div>
 
-    .hero-title {
-        font-size: 3rem;
-        margin: 10px 0 5px 0;
-        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
+    <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div style="text-align: center; padding: 1.5rem;">
+            <div class="role-badge student" style="font-size: 16px; padding: 12px 24px; margin-bottom: 1rem;">
+                <i class="fas fa-user-graduate"></i> Student
+            </div>
+            <ul style="text-align: left; color: var(--text-secondary); font-size: 14px; padding-left: 1.5rem;">
+                <li>Upload encrypted resume</li>
+                <li>View placement drives</li>
+                <li>Apply to jobs</li>
+                <li>View verified results</li>
+            </ul>
+        </div>
 
-    .hero-subtitle {
-        font-size: 1.5rem;
-        color: var(--secondary-color);
-        margin: 0 0 20px 0;
-        font-weight: 400;
-    }
+        <div style="text-align: center; padding: 1.5rem;">
+            <div class="role-badge hr" style="font-size: 16px; padding: 12px 24px; margin-bottom: 1rem;">
+                <i class="fas fa-building"></i> Company HR
+            </div>
+            <ul style="text-align: left; color: var(--text-secondary); font-size: 14px; padding-left: 1.5rem;">
+                <li>Post placement drives</li>
+                <li>Decrypt & view resumes</li>
+                <li>Manage applicants</li>
+                <li>Publish signed results</li>
+            </ul>
+        </div>
 
-    .hero-description {
-        max-width: 600px;
-        font-size: 1.1rem;
-        color: var(--text-color);
-        opacity: 0.9;
-        margin-bottom: 30px;
-    }
+        <div style="text-align: center; padding: 1.5rem;">
+            <div class="role-badge admin" style="font-size: 16px; padding: 12px 24px; margin-bottom: 1rem;">
+                <i class="fas fa-crown"></i> Admin
+            </div>
+            <ul style="text-align: left; color: var(--text-secondary); font-size: 14px; padding-left: 1.5rem;">
+                <li>View all statistics</li>
+                <li>User management</li>
+                <li>Security demo pages</li>
+                <li>Access control matrix</li>
+            </ul>
+        </div>
+    </div>
+</div>
 
-    .hero-features {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-        max-width: 900px;
-        margin: 30px 0;
-    }
+<!-- Technology Stack -->
+<div class="card slide-up"
+    style="margin-top: 2rem; background: linear-gradient(135deg, #1e293b, #334155); color: white;">
+    <h3 style="color: white; margin-bottom: 1rem;"><i class="fas fa-code"></i> Technology Stack</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+        <span class="badge" style="background: rgba(255,255,255,0.2); color: white; padding: 8px 16px;">
+            <i class="fab fa-python"></i> Flask
+        </span>
+        <span class="badge" style="background: rgba(255,255,255,0.2); color: white; padding: 8px 16px;">
+            <i class="fas fa-database"></i> SQLite
+        </span>
+        <span class="badge" style="background: rgba(255,255,255,0.2); color: white; padding: 8px 16px;">
+            <i class="fas fa-lock"></i> PyCryptodome
+        </span>
+        <span class="badge" style="background: rgba(255,255,255,0.2); color: white; padding: 8px 16px;">
+            <i class="fas fa-key"></i> bcrypt
+        </span>
+        <span class="badge" style="background: rgba(255,255,255,0.2); color: white; padding: 8px 16px;">
+            <i class="fas fa-mobile-alt"></i> pyotp (TOTP)
+        </span>
+        <span class="badge" style="background: rgba(255,255,255,0.2); color: white; padding: 8px 16px;">
+            <i class="fas fa-qrcode"></i> qrcode
+        </span>
+    </div>
+</div>
 
-    .feature-card {
-        background: var(--card-bg);
-        padding: 20px;
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow);
-        transition: var(--transition);
-    }
-
-    .feature-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .feature-card i {
-        font-size: 2rem;
-        color: var(--accent-color);
-        margin-bottom: 10px;
-    }
-
-    .feature-card h4 {
-        margin: 10px 0 5px 0;
-        color: var(--text-color);
-    }
-
-    .feature-card p {
-        font-size: 0.9rem;
-        color: var(--secondary-color);
-        margin: 0;
-    }
-
-    .hero-cta {
-        display: flex;
-        gap: 15px;
-        margin: 30px 0;
-    }
-
-    .btn-lg {
-        padding: 15px 30px;
-        font-size: 1.1rem;
-    }
-
-    .hero-roles {
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .role-badge {
-        padding: 8px 15px;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
-
-    .role-badge.student {
-        background: rgba(0, 184, 148, 0.2);
-        color: #00b894;
-    }
-
-    .role-badge.hr {
-        background: rgba(108, 92, 231, 0.2);
-        color: #6c5ce7;
-    }
-
-    .role-badge.admin {
-        background: rgba(225, 112, 85, 0.2);
-        color: #e17055;
-    }
-</style>
+<!-- CTA Section -->
+<div style="text-align: center; margin-top: 3rem; padding: 2rem;">
+    <h2>Ready to Explore?</h2>
+    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+        Experience all security features with role-based access
+    </p>
+    <a href="{{ url_for('auth.register') }}" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 16px;">
+        <i class="fas fa-rocket"></i> Get Started
+    </a>
+</div>
 {% endblock %}

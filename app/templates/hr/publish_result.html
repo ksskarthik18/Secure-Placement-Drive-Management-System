@@ -1,32 +1,84 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container" style="max-width: 600px;">
-    <div class="card">
-        <h2><i class="fas fa-certificate"></i> Publish Placement Result</h2>
-        <p>You are about to publish a result for <strong>{{ student.username }}</strong>.</p>
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-trophy"></i> Publish Result</h1>
+        <p class="page-subtitle">Create a digitally signed placement result</p>
+    </div>
+    <a href="{{ url_for('hr.dashboard') }}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
 
-        <div class="alert alert-warning">
-            <i class="fas fa-pen-nib"></i> <strong>Security Action:</strong> Digital Signature
-            <p>The system will:</p>
-            <ol>
-                <li>Hash the placement data (SHA-256)</li>
-                <li>Sign the hash using the Admin's Private Key (RSA)</li>
-                <li>Store the signature to ensure non-repudiation.</li>
+<div class="card" style="max-width: 700px; margin: 0 auto;">
+    <!-- Student Info -->
+    <div class="flex items-center gap-2"
+        style="margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color);">
+        <div class="stat-icon blue" style="width: 56px; height: 56px; font-size: 22px;">
+            <i class="fas fa-user-graduate"></i>
+        </div>
+        <div>
+            <h3 style="margin: 0;">{{ student.username }}</h3>
+            <p style="margin: 0; color: var(--text-secondary); font-size: 14px;">{{ student.email }}</p>
+        </div>
+    </div>
+
+    <!-- Security Info -->
+    <div class="alert alert-warning" style="margin-bottom: 1.5rem;">
+        <i class="fas fa-signature"></i>
+        <div>
+            <strong>Digital Signature Process:</strong>
+            <ol style="margin: 0.5rem 0 0; padding-left: 1.2rem; font-size: 14px;">
+                <li>Hash the placement data using <strong>SHA-256</strong></li>
+                <li>Sign the hash with <strong>RSA private key</strong></li>
+                <li>Store signature for <strong>integrity verification</strong></li>
             </ol>
         </div>
-
-        <form method="POST">
-            <div class="form-group">
-                <label>Company Name</label>
-                <input type="text" name="company_name" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label>Package (LPA)</label>
-                <input type="text" name="package" class="form-control" placeholder="e.g. 12 LPA" required>
-            </div>
-            <button type="submit" class="btn"><i class="fas fa-file-signature"></i> Sign & Publish</button>
-        </form>
     </div>
+
+    <!-- Form -->
+    <form method="POST">
+        <div class="form-group">
+            <label for="company_name"><i class="fas fa-building"></i> Company Name</label>
+            <input type="text" id="company_name" name="company_name" class="form-control"
+                placeholder="e.g., Google, Microsoft" required>
+        </div>
+
+        <div class="form-group">
+            <label for="package"><i class="fas fa-rupee-sign"></i> Package</label>
+            <input type="text" id="package" name="package" class="form-control" placeholder="e.g., 12 LPA" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem;">
+            <i class="fas fa-file-signature"></i> Sign & Publish Result
+        </button>
+    </form>
+</div>
+
+<!-- What Happens -->
+<div class="card" style="max-width: 700px; margin: 2rem auto; border-left: 4px solid var(--accent-green);">
+    <h4><i class="fas fa-info-circle"></i> What Happens After Publishing</h4>
+    <ul style="color: var(--text-secondary); font-size: 14px; padding-left: 1.5rem; margin: 0.5rem 0 0;">
+        <li>Result will be <strong>digitally signed</strong> and stored in database</li>
+        <li>Student can view result with <strong>signature verification</strong></li>
+        <li>If data is modified, verification will <strong>FAIL</strong></li>
+        <li>Admin can verify signatures from the dashboard</li>
+    </ul>
+</div>
+
+<!-- Terminal Preview -->
+<div class="card" style="max-width: 700px; margin: 0 auto; background: #1e1e1e; color: #10b981;">
+    <h4 style="color: #fff; margin-bottom: 1rem;"><i class="fas fa-terminal"></i> Terminal Output (On Publish)</h4>
+    <pre style="font-family: monospace; font-size: 12px; margin: 0;">
+============================================================
+PUBLISHING DIGITALLY SIGNED RESULT
+Student: {{ student.username }}
+Data: "{{ student.id }}:CompanyName:Package"
+SHA-256 Hash: a1b2c3d4e5f6...
+RSA Signature: XyZ123AbC...
+Result stored with NON-REPUDIATION guarantee!
+============================================================
+    </pre>
 </div>
 {% endblock %}

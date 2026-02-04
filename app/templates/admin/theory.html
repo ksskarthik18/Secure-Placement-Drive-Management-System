@@ -1,60 +1,309 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<a href="{{ url_for('admin.dashboard') }}">&larr; Back to Dashboard</a>
-<h2><i class="fas fa-book"></i> Security Theory & Implementation</h2>
-
-<div class="card">
-    <h3>1. Security Levels Implemented</h3>
-    <ul>
-        <li><strong>Network Level:</strong> Not applicable (Localhost), but design supports HTTPS.</li>
-        <li><strong>Application Level:</strong> RBAC, Input Validation, Session Management.</li>
-        <li><strong>Data Level:</strong> AES-256 Encryption for stored files, Salted Hashing for passwords.</li>
-    </ul>
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-book"></i> Security Theory</h1>
+        <p class="page-subtitle">Understanding Security Concepts, Attacks & Countermeasures</p>
+    </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
 </div>
 
+<!-- Security Levels -->
+<div class="card" style="border-left: 4px solid var(--primary-500);">
+    <h2><i class="fas fa-layer-group"></i> Security Levels Implemented</h2>
+
+    <div class="stats-grid" style="margin-top: 1.5rem;">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="fas fa-user-lock"></i>
+            </div>
+            <div class="stat-content">
+                <h4>Authentication</h4>
+                <p>Password + TOTP MFA</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div class="stat-content">
+                <h4>Authorization</h4>
+                <p>Role-Based Access Control</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="fas fa-lock"></i>
+            </div>
+            <div class="stat-content">
+                <h4>Confidentiality</h4>
+                <p>AES-256 + RSA Encryption</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon yellow">
+                <i class="fas fa-fingerprint"></i>
+            </div>
+            <div class="stat-content">
+                <h4>Integrity</h4>
+                <p>SHA-256 Digital Signatures</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Attacks and Countermeasures -->
 <div class="card">
-    <h3>2. Attacks & Countermeasures</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Attack Vector</th>
-                <th>Countermeasure Used</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>Brute Force</strong></td>
-                <td>Account locking (Concept) / Strong Password Hashing (bcrypt is slow)</td>
-                <td><span class="badge" style="background: green;">Secured</span></td>
-            </tr>
-            <tr>
-                <td><strong>Replay Attack</strong></td>
-                <td>OTP with strict expiration time (Time-Based)</td>
-                <td><span class="badge" style="background: green;">Secured</span></td>
-            </tr>
-            <tr>
-                <td><strong>Man-in-the-Middle (MITM)</strong></td>
-                <td>Encrypted communication (HTTPS - Required in Prod) + E2E Encryption for Resumes</td>
-                <td><span class="badge" style="background: orange;">Partial (Local)</span></td>
-            </tr>
-            <tr>
-                <td><strong>SQL Injection</strong></td>
-                <td>Use of ORM (SQLAlchemy) prevents raw SQL queries.</td>
-                <td><span class="badge" style="background: green;">Secured</span></td>
-            </tr>
-            <tr>
-                <td><strong>Unauthorized Access</strong></td>
-                <td>Role-Based Access Control (RBAC decorators)</td>
-                <td><span class="badge" style="background: green;">Secured</span></td>
-            </tr>
-            <tr>
-                <td><strong>Data Tampering</strong></td>
-                <td>Digital Signatures (SHA-256 + RSA) for Placement Results</td>
-                <td><span class="badge" style="background: green;">Secured</span></td>
-            </tr>
-        </tbody>
-    </table>
+    <h2><i class="fas fa-shield-virus"></i> Possible Attacks & Countermeasures</h2>
+
+    <!-- Brute Force Attack -->
+    <div class="theory-section" style="border-left-color: #ef4444;">
+        <h3><i class="fas fa-hammer"></i> 1. Brute Force Attack</h3>
+        <p><strong>Description:</strong> Attacker tries all possible password combinations until finding the correct
+            one.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+            <div>
+                <h4 style="color: #ef4444;"><i class="fas fa-bug"></i> Attack Vector</h4>
+                <ul>
+                    <li>Automated password guessing</li>
+                    <li>Dictionary attacks using common passwords</li>
+                    <li>Rainbow table attacks on weak hashes</li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: #10b981;"><i class="fas fa-shield-alt"></i> Our Countermeasures</h4>
+                <ul>
+                    <li><strong>bcrypt hashing</strong> with salt (slow by design)</li>
+                    <li><strong>Password strength validation</strong> (8+ chars, mixed case, symbols)</li>
+                    <li><strong>TOTP MFA</strong> - even correct password needs 6-digit code</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Replay Attack -->
+    <div class="theory-section" style="border-left-color: #f59e0b;">
+        <h3><i class="fas fa-redo"></i> 2. Replay Attack</h3>
+        <p><strong>Description:</strong> Attacker captures valid authentication data and re-sends it to gain
+            unauthorized access.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+            <div>
+                <h4 style="color: #f59e0b;"><i class="fas fa-bug"></i> Attack Vector</h4>
+                <ul>
+                    <li>Capturing session tokens</li>
+                    <li>Re-using old OTP codes</li>
+                    <li>Intercepting authentication requests</li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: #10b981;"><i class="fas fa-shield-alt"></i> Our Countermeasures</h4>
+                <ul>
+                    <li><strong>TOTP</strong> - codes expire every 30 seconds</li>
+                    <li><strong>One-time use</strong> - Each TOTP valid only once</li>
+                    <li><strong>Session management</strong> - Unique session tokens</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Man-in-the-Middle Attack -->
+    <div class="theory-section" style="border-left-color: #8b5cf6;">
+        <h3><i class="fas fa-user-secret"></i> 3. Man-in-the-Middle (MITM) Attack</h3>
+        <p><strong>Description:</strong> Attacker intercepts communication between client and server to steal or modify
+            data.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+            <div>
+                <h4 style="color: #8b5cf6;"><i class="fas fa-bug"></i> Attack Vector</h4>
+                <ul>
+                    <li>Network eavesdropping</li>
+                    <li>DNS spoofing</li>
+                    <li>SSL stripping</li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: #10b981;"><i class="fas fa-shield-alt"></i> Our Countermeasures</h4>
+                <ul>
+                    <li><strong>End-to-end encryption</strong> of sensitive data</li>
+                    <li><strong>RSA key exchange</strong> - AES key encrypted with public key</li>
+                    <li><strong>Digital signatures</strong> - detect data tampering</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unauthorized Access -->
+    <div class="theory-section" style="border-left-color: #3b82f6;">
+        <h3><i class="fas fa-ban"></i> 4. Unauthorized Access</h3>
+        <p><strong>Description:</strong> User attempts to access resources they are not permitted to view or modify.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+            <div>
+                <h4 style="color: #3b82f6;"><i class="fas fa-bug"></i> Attack Vector</h4>
+                <ul>
+                    <li>Direct URL manipulation</li>
+                    <li>Privilege escalation</li>
+                    <li>Session hijacking</li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: #10b981;"><i class="fas fa-shield-alt"></i> Our Countermeasures</h4>
+                <ul>
+                    <li><strong>RBAC</strong> - Role-Based Access Control</li>
+                    <li><strong>Backend authorization</strong> checks on every request</li>
+                    <li><strong>Decorator-based protection</strong> - @role_required</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Tampering -->
+    <div class="theory-section" style="border-left-color: #ec4899;">
+        <h3><i class="fas fa-edit"></i> 5. Data Tampering</h3>
+        <p><strong>Description:</strong> Attacker modifies data (e.g., placement results) to change outcomes.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+            <div>
+                <h4 style="color: #ec4899;"><i class="fas fa-bug"></i> Attack Vector</h4>
+                <ul>
+                    <li>Database manipulation</li>
+                    <li>Form data modification</li>
+                    <li>API payload tampering</li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: #10b981;"><i class="fas fa-shield-alt"></i> Our Countermeasures</h4>
+                <ul>
+                    <li><strong>Digital signatures</strong> on placement results</li>
+                    <li><strong>SHA-256 hashing</strong> of original data</li>
+                    <li><strong>Signature verification</strong> before display</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cryptographic Algorithms Used -->
+<div class="card">
+    <h2><i class="fas fa-cogs"></i> Cryptographic Algorithms Used</h2>
+
+    <div class="table-container">
+        <table class="matrix-table">
+            <thead>
+                <tr>
+                    <th>Algorithm</th>
+                    <th>Type</th>
+                    <th>Key Size</th>
+                    <th>Usage in System</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>bcrypt</th>
+                    <td>Hashing</td>
+                    <td>N/A (adaptive)</td>
+                    <td>Password storage with salt</td>
+                </tr>
+                <tr>
+                    <th>SHA-256</th>
+                    <td>Hashing</td>
+                    <td>256 bits</td>
+                    <td>Data integrity for signatures</td>
+                </tr>
+                <tr>
+                    <th>AES-256-CBC</th>
+                    <td>Symmetric Encryption</td>
+                    <td>256 bits</td>
+                    <td>Resume file encryption</td>
+                </tr>
+                <tr>
+                    <th>RSA</th>
+                    <td>Asymmetric Encryption</td>
+                    <td>2048 bits</td>
+                    <td>AES key encryption & signatures</td>
+                </tr>
+                <tr>
+                    <th>TOTP (RFC 6238)</th>
+                    <td>One-Time Password</td>
+                    <td>160 bits (secret)</td>
+                    <td>Multi-factor authentication</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Security Architecture -->
+<div class="card" style="background: linear-gradient(135deg, #1e293b, #334155); color: white;">
+    <h2 style="color: white;"><i class="fas fa-project-diagram"></i> Security Architecture Overview</h2>
+
+    <div style="margin-top: 1.5rem; font-family: monospace; font-size: 13px; line-height: 2;">
+        <pre style="color: #10b981;">
+┌─────────────────────────────────────────────────────────────────┐
+│                       CLIENT (Browser)                          │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │ HTTPS
+                           ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    AUTHENTICATION LAYER                         │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
+│  │  Password   │───▶│   bcrypt    │───▶│    TOTP     │         │
+│  │   Input     │    │   Verify    │    │   Verify    │         │
+│  └─────────────┘    └─────────────┘    └─────────────┘         │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    AUTHORIZATION LAYER                          │
+│           @role_required('Student' | 'HR' | 'Admin')            │
+│                    RBAC Permission Check                        │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                       DATA LAYER                                │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
+│  │   Resume    │    │   Results   │    │    Users    │         │
+│  │ AES+RSA Enc │    │  Digitally  │    │   bcrypt    │         │
+│  │             │    │   Signed    │    │   hashed    │         │
+│  └─────────────┘    └─────────────┘    └─────────────┘         │
+└─────────────────────────────────────────────────────────────────┘
+        </pre>
+    </div>
+</div>
+
+<!-- CIA Triad -->
+<div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="card" style="text-align: center; border-top: 4px solid #3b82f6;">
+        <i class="fas fa-user-secret" style="font-size: 40px; color: #3b82f6;"></i>
+        <h3 style="margin-top: 1rem;">Confidentiality</h3>
+        <p style="color: var(--text-secondary); font-size: 14px;">
+            Data is accessible only to authorized users through encryption and access control.
+        </p>
+    </div>
+
+    <div class="card" style="text-align: center; border-top: 4px solid #10b981;">
+        <i class="fas fa-shield-alt" style="font-size: 40px; color: #10b981;"></i>
+        <h3 style="margin-top: 1rem;">Integrity</h3>
+        <p style="color: var(--text-secondary); font-size: 14px;">
+            Data remains accurate and unaltered through hashing and digital signatures.
+        </p>
+    </div>
+
+    <div class="card" style="text-align: center; border-top: 4px solid #f59e0b;">
+        <i class="fas fa-clock" style="font-size: 40px; color: #f59e0b;"></i>
+        <h3 style="margin-top: 1rem;">Availability</h3>
+        <p style="color: var(--text-secondary); font-size: 14px;">
+            System remains accessible to authorized users when needed.
+        </p>
+    </div>
 </div>
 {% endblock %}

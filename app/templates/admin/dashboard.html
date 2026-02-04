@@ -1,36 +1,236 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<div class="row">
-    <div class="card" style="width: 100%;">
-        <h2><i class="fas fa-user-shield"></i> Admin Dashboard (Placement Officer)</h2>
-        <p>Welcome, {{ current_user.username }}. You have access to sensitive security demonstrations.</p>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Admin Dashboard</h1>
+        <p class="page-subtitle">Placement Officer Control Panel</p>
+    </div>
+    <div class="role-badge admin">
+        <i class="fas fa-crown"></i> {{ current_user.role }}
+    </div>
+</div>
 
-        <div
-            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
-            <a href="{{ url_for('admin.view_hashes') }}" class="card"
-                style="text-decoration: none; color: inherit; border-left: 5px solid #e17055;">
-                <h3><i class="fas fa-hashtag"></i> Password Hashes</h3>
-                <p>View user table with bcrypt hashed passwords.</p>
-            </a>
+<!-- User Info Card -->
+<div class="card slide-up">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <div class="stat-icon purple">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div>
+                <h3 style="margin:0; font-size: 18px;">Welcome, {{ current_user.username }}</h3>
+                <p style="margin:0; font-size: 13px; color: var(--text-secondary);">{{ current_user.email }}</p>
+            </div>
+        </div>
+        <div class="security-badge verified">
+            <i class="fas fa-shield-alt"></i>
+            {% if current_user.totp_enabled %}MFA Active{% else %}MFA Not Setup{% endif %}
+        </div>
+    </div>
+</div>
 
-            <a href="{{ url_for('admin.rbac_matrix') }}" class="card"
-                style="text-decoration: none; color: inherit; border-left: 5px solid #0984e3;">
-                <h3><i class="fas fa-th"></i> RBAC Matrix</h3>
-                <p>View Role-Based Access Control policies.</p>
-            </a>
+<!-- Statistics Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon blue">
+            <i class="fas fa-user-graduate"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ stats.total_students }}</h3>
+            <p>Students Registered</p>
+        </div>
+    </div>
 
-            <a href="{{ url_for('admin.encryption_demo') }}" class="card"
-                style="text-decoration: none; color: inherit; border-left: 5px solid #00b894;">
-                <h3><i class="fas fa-lock"></i> Encryption Lab</h3>
-                <p>Interactive AES-256 encryption demo.</p>
-            </a>
+    <div class="stat-card">
+        <div class="stat-icon purple">
+            <i class="fas fa-building"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ stats.total_hrs }}</h3>
+            <p>Company HRs</p>
+        </div>
+    </div>
 
-            <a href="{{ url_for('admin.theory') }}" class="card"
-                style="text-decoration: none; color: inherit; border-left: 5px solid #6c5ce7;">
-                <h3><i class="fas fa-book"></i> Security Theory</h3>
-                <p>Explanation of attacks and countermeasures.</p>
-            </a>
+    <div class="stat-card">
+        <div class="stat-icon green">
+            <i class="fas fa-file-alt"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ stats.total_resumes }}</h3>
+            <p>Resumes Uploaded</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon yellow">
+            <i class="fas fa-briefcase"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ stats.active_jobs }}</h3>
+            <p>Active Drives</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon blue">
+            <i class="fas fa-paper-plane"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ stats.total_applications }}</h3>
+            <p>Applications</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon green">
+            <i class="fas fa-trophy"></i>
+        </div>
+        <div class="stat-content">
+            <h3>{{ stats.results_published }}</h3>
+            <p>Results Published</p>
+        </div>
+    </div>
+</div>
+
+<!-- Security Features Quick Links -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><i class="fas fa-shield-alt"></i> Security Demo Pages</h2>
+    </div>
+
+    <div class="quick-links">
+        <a href="{{ url_for('admin.manage_users') }}" class="quick-link">
+            <div class="quick-link-icon">
+                <i class="fas fa-users-cog"></i>
+            </div>
+            <div class="quick-link-content">
+                <h4>User Management</h4>
+                <p>View and manage all users</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('admin.view_hashes') }}" class="quick-link">
+            <div class="quick-link-icon">
+                <i class="fas fa-hashtag"></i>
+            </div>
+            <div class="quick-link-content">
+                <h4>Password Hashes</h4>
+                <p>View salted bcrypt hashes</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('admin.rbac_matrix') }}" class="quick-link">
+            <div class="quick-link-icon">
+                <i class="fas fa-th"></i>
+            </div>
+            <div class="quick-link-content">
+                <h4>Access Control Matrix</h4>
+                <p>RBAC permission matrix</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('admin.encryption_demo') }}" class="quick-link">
+            <div class="quick-link-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <div class="quick-link-content">
+                <h4>Encryption Demo</h4>
+                <p>AES + RSA hybrid encryption</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('admin.signature_verify') }}" class="quick-link">
+            <div class="quick-link-icon">
+                <i class="fas fa-signature"></i>
+            </div>
+            <div class="quick-link-content">
+                <h4>Digital Signatures</h4>
+                <p>Verify result authenticity</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('admin.encoding_demo') }}" class="quick-link">
+            <div class="quick-link-icon">
+                <i class="fas fa-qrcode"></i>
+            </div>
+            <div class="quick-link-content">
+                <h4>Encoding Demo</h4>
+                <p>QR Code & Base64 encoding</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('admin.theory') }}" class="quick-link">
+            <div class="quick-link-icon">
+                <i class="fas fa-book"></i>
+            </div>
+            <div class="quick-link-content">
+                <h4>Security Theory</h4>
+                <p>Attacks & countermeasures</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Recent Users -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><i class="fas fa-user-plus"></i> Recent Registrations</h2>
+        <a href="{{ url_for('admin.manage_users') }}" class="btn btn-sm btn-outline">View All</a>
+    </div>
+
+    {% if recent_users %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>MFA Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in recent_users %}
+                <tr>
+                    <td><strong>{{ user.username }}</strong></td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <span
+                            class="badge badge-{% if user.role == 'Admin' %}danger{% elif user.role == 'HR' %}primary{% else %}info{% endif %}">
+                            {{ user.role }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if user.totp_enabled %}
+                        <span class="security-badge verified"><i class="fas fa-check"></i> Enabled</span>
+                        {% else %}
+                        <span class="badge badge-warning">Not Setup</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-users"></i>
+        <h3>No users yet</h3>
+        <p>Users will appear here after registration</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Security Status -->
+<div class="card" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+    <div class="flex items-center gap-2">
+        <i class="fas fa-shield-alt" style="font-size: 32px;"></i>
+        <div>
+            <h3 style="margin:0; font-size: 18px;">System Security Status: ACTIVE</h3>
+            <p style="margin:4px 0 0; opacity: 0.9; font-size: 13px;">
+                AES-256 Encryption • RSA-2048 Key Exchange • bcrypt Password Hashing • TOTP MFA • Digital Signatures
+            </p>
         </div>
     </div>
 </div>

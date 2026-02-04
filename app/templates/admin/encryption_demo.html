@@ -1,38 +1,181 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<a href="{{ url_for('admin.dashboard') }}">&larr; Back to Dashboard</a>
-<h2><i class="fas fa-lock"></i> Encryption Demonstration</h2>
-<p>Interactive tool to demonstrate AES-256 encryption.</p>
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-lock"></i> Encryption Demonstration</h1>
+        <p class="page-subtitle">AES-256 + RSA-2048 Hybrid Encryption</p>
+    </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
 
-<div class="row" style="display: flex; gap: 20px;">
-    <!-- Input Form -->
-    <div class="card" style="flex: 1;">
-        <h3>Input Data</h3>
-        <form method="POST">
-            <input type="hidden" name="action" value="encrypt">
-            <div class="form-group">
-                <label>Text to Encrypt</label>
-                <textarea name="data" class="form-control" rows="5" required
-                    placeholder="Enter sensitive data here..."></textarea>
-            </div>
-            <button type="submit" class="btn">Encrypt (AES-256)</button>
-        </form>
+<!-- Theory Card -->
+<div class="card" style="border-left: 4px solid var(--accent-green);">
+    <h3><i class="fas fa-info-circle"></i> How Hybrid Encryption Works</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem;">
+        <div>
+            <h4 style="color: var(--accent-blue);"><i class="fas fa-key"></i> AES-256 (Symmetric)</h4>
+            <ul style="color: var(--text-secondary); padding-left: 1.5rem; font-size: 14px;">
+                <li>Fast encryption for large data</li>
+                <li>Same key for encrypt & decrypt</li>
+                <li>256-bit key = 2^256 possibilities</li>
+                <li>CBC mode with random IV</li>
+            </ul>
+        </div>
+        <div>
+            <h4 style="color: var(--accent-purple);"><i class="fas fa-unlock-alt"></i> RSA-2048 (Asymmetric)</h4>
+            <ul style="color: var(--text-secondary); padding-left: 1.5rem; font-size: 14px;">
+                <li>Secures the AES key</li>
+                <li>Public key encrypts, private decrypts</li>
+                <li>2048-bit key for security</li>
+                <li>Only server has private key</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Interactive Demo -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><i class="fas fa-flask"></i> Try It Yourself</h2>
     </div>
 
-    <!-- Output -->
-    <div class="card" style="flex: 1;">
-        <h3>Output (Ciphertext)</h3>
-        {% if result %}
-        <div
-            style="background: #2d3436; color: #55efc4; padding: 15px; border-radius: 4px; font-family: monospace; overflow-x: auto;">
-            <p><strong>Ciphertext (Base64):</strong><br>{{ result.ciphertext }}</p>
-            <p><strong>IV (Base64):</strong><br>{{ result.iv }}</p>
-            <p><strong>Encrypted AES Key (RSA-Wrapped):</strong><br>{{ result.encrypted_aes_key[:50] }}...</p>
+    <form method="POST">
+        <div class="form-group">
+            <label for="data"><i class="fas fa-keyboard"></i> Enter Plaintext Data:</label>
+            <input type="text" id="data" name="data" class="form-control"
+                placeholder="e.g., Confidential Resume: John Doe, BTech CSE, CGPA 9.0"
+                value="{{ result.original if result else '' }}" required>
         </div>
-        {% else %}
-        <p>Waiting for input...</p>
-        {% endif %}
+        <input type="hidden" name="action" value="encrypt">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-lock"></i> Encrypt Data
+        </button>
+    </form>
+</div>
+
+{% if result %}
+<!-- Results -->
+<div class="card slide-up" style="border-top: 4px solid var(--accent-green);">
+    <h3><i class="fas fa-check-circle" style="color: var(--accent-green);"></i> Encryption Results</h3>
+
+    <!-- Step 1: Original -->
+    <div class="form-group">
+        <label><span class="badge badge-info">Step 1</span> Original Plaintext</label>
+        <div class="code-block" style="background: var(--bg-secondary);">{{ result.original }}</div>
+    </div>
+
+    <!-- Step 2: AES Encryption -->
+    <div class="form-group">
+        <label><span class="security-badge encrypted"><i class="fas fa-lock"></i> Step 2</span> AES-256 Ciphertext
+            (Base64)</label>
+        <div class="code-block" style="word-break: break-all; font-size: 11px;">{{ result.ciphertext }}</div>
+    </div>
+
+    <!-- Step 3: IV -->
+    <div class="form-group">
+        <label><span class="badge badge-warning">Step 3</span> Initialization Vector (IV)</label>
+        <div class="code-block">{{ result.iv }}</div>
+        <small style="color: var(--text-muted);">Random 16-byte IV ensures same plaintext produces different ciphertext
+            each time.</small>
+    </div>
+
+    <!-- Step 4: RSA Encrypted Key -->
+    <div class="form-group">
+        <label><span class="security-badge hashed"><i class="fas fa-key"></i> Step 4</span> RSA-Encrypted AES
+            Key</label>
+        <div class="code-block" style="word-break: break-all; font-size: 11px;">{{ result.encrypted_aes_key }}</div>
+        <small style="color: var(--text-muted);">AES key is encrypted with server's RSA public key. Only server can
+            decrypt.</small>
+    </div>
+
+    <hr style="border-color: var(--border-color);">
+
+    <!-- Step 5: Decryption -->
+    <div class="form-group">
+        <label><span class="badge badge-success">Step 5</span> Decrypted Result (Server-side)</label>
+        <div class="code-block" style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-green);">{{
+            result.decrypted }}</div>
+    </div>
+
+    <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <strong>Success!</strong> Data encrypted with AES-256 and successfully decrypted using the server's private RSA
+        key.
+    </div>
+</div>
+
+<!-- Process Flow -->
+<div class="card">
+    <h3><i class="fas fa-project-diagram"></i> Encryption Flow</h3>
+    <div class="code-block" style="font-family: monospace; font-size: 12px; line-height: 2; color: #10b981;">
+        <pre>
+┌─────────────────────────────────────────────────────────────┐
+│                    ENCRYPTION PROCESS                       │
+└─────────────────────────────────────────────────────────────┘
+
+    Plaintext: "{{ result.original[:30] }}{% if result.original|length > 30 %}...{% endif %}"
+         │
+         ▼
+    ┌─────────────────────────────────────────┐
+    │  Generate Random AES-256 Key (32 bytes) │
+    │  Generate Random IV (16 bytes)          │
+    └─────────────────────────────────────────┘
+         │
+         ▼
+    ┌─────────────────────────────────────────┐
+    │      AES-256-CBC Encryption             │
+    │  Plaintext + Key + IV → Ciphertext      │
+    └─────────────────────────────────────────┘
+         │
+         ├─────────────────────────────────────────┐
+         │                                         │
+         ▼                                         ▼
+    Ciphertext (stored)              ┌─────────────────────────┐
+                                     │  RSA-2048 Encryption    │
+                                     │  AES Key + Public Key   │
+                                     │  → Encrypted AES Key    │
+                                     └─────────────────────────┘
+                                              │
+                                              ▼
+                                     Encrypted Key (stored)
+</pre>
+    </div>
+</div>
+{% endif %}
+
+<!-- Database Storage -->
+<div class="card">
+    <h3><i class="fas fa-database"></i> What's Stored in Database</h3>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Field</th>
+                    <th>Description</th>
+                    <th>Security</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>ciphertext</code></td>
+                    <td>AES-encrypted file content</td>
+                    <td><span class="security-badge encrypted"><i class="fas fa-lock"></i> Encrypted</span></td>
+                </tr>
+                <tr>
+                    <td><code>iv</code></td>
+                    <td>Initialization Vector</td>
+                    <td><span class="badge badge-info">Public</span></td>
+                </tr>
+                <tr>
+                    <td><code>encrypted_aes_key</code></td>
+                    <td>AES key encrypted with RSA</td>
+                    <td><span class="security-badge encrypted"><i class="fas fa-key"></i> Protected</span></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

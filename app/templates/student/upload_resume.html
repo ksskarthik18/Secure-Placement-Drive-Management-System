@@ -1,27 +1,114 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container" style="max-width: 600px;">
-    <div class="card">
-        <h2><i class="fas fa-lock"></i> Secure Resume Upload</h2>
-        <p>Your resume will be <strong>AES-256 Encrypted</strong> before storage. Only authorized HR/Admins can decrypt
-            it.</p>
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-file-upload"></i> Secure Resume Upload</h1>
+        <p class="page-subtitle">Your resume will be encrypted with AES-256</p>
+    </div>
+    <a href="{{ url_for('student.dashboard') }}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
 
-        <div class="alert alert-info">
-            <i class="fas fa-key"></i> <strong>Security Mechanism:</strong> Hybrid Encryption
-            <ul>
-                <li>File Data: AES-256 (CBC)</li>
-                <li>AES Key: RSA-2048 (Admin's Public Key)</li>
+<!-- Existing Resume -->
+{% if existing_resume %}
+<div class="card" style="border-left: 4px solid var(--accent-green);">
+    <div class="flex items-center justify-between" style="flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h3 style="margin:0;">
+                <i class="fas fa-file-pdf" style="color: var(--accent-red);"></i>
+                {{ existing_resume.filename }}
+            </h3>
+            <p style="margin: 0.5rem 0 0; color: var(--text-secondary); font-size: 14px;">
+                <i class="fas fa-calendar"></i> Uploaded: {{ existing_resume.upload_date.strftime('%d %b %Y, %I:%M %p')
+                }}
+            </p>
+        </div>
+        <span class="security-badge encrypted">
+            <i class="fas fa-lock"></i> AES-256 Encrypted
+        </span>
+    </div>
+</div>
+{% endif %}
+
+<!-- Upload Form -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">{% if existing_resume %}Update Resume{% else %}Upload Resume{% endif %}</h2>
+    </div>
+
+    <!-- Security Info -->
+    <div class="alert alert-info" style="margin-bottom: 1.5rem;">
+        <i class="fas fa-shield-alt"></i>
+        <div>
+            <strong>How Your Resume is Protected:</strong>
+            <ul style="margin: 0.5rem 0 0; padding-left: 1.2rem;">
+                <li>File is encrypted with <strong>AES-256</strong> (symmetric encryption)</li>
+                <li>AES key is protected with <strong>RSA-2048</strong> (asymmetric)</li>
+                <li>Only authorized <strong>HR personnel</strong> can decrypt and view</li>
             </ul>
         </div>
-
-        <form method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label>Select Resume (PDF/DOCX/TXT)</label>
-                <input type="file" name="resume" class="form-control" required>
-            </div>
-            <button type="submit" class="btn"><i class="fas fa-upload"></i> Encrypt & Upload</button>
-        </form>
     </div>
+
+    <form method="POST" enctype="multipart/form-data" id="uploadForm">
+        <div class="form-group">
+            <label for="resume"><i class="fas fa-paperclip"></i> Select File (PDF, DOCX, TXT)</label>
+            <input type="file" id="resume" name="resume" class="form-control" accept=".pdf,.docx,.doc,.txt" required>
+            <small style="color: var(--text-muted);">Maximum file size: 10 MB</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="padding: 0.875rem 2rem;">
+            <i class="fas fa-lock"></i> Encrypt & Upload
+        </button>
+    </form>
+</div>
+
+<!-- Encryption Process Visual -->
+<div class="card">
+    <h3><i class="fas fa-cogs"></i> Encryption Process</h3>
+    <div class="code-block" style="font-family: monospace; font-size: 12px; line-height: 2; color: #10b981;">
+        <pre>
+┌─────────────────────────────────────────────────────────┐
+│                   YOUR RESUME FILE                      │
+│                  (Original PDF/DOCX)                    │
+└────────────────────────┬────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────┐
+│            Generate Random AES-256 Key                  │
+│            Generate Random IV (16 bytes)                │
+└────────────────────────┬────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────┐
+│               AES-256-CBC Encryption                    │
+│           File Content → Encrypted Ciphertext           │
+└────────────────────────┬────────────────────────────────┘
+                         │
+          ┌──────────────┴──────────────┐
+          │                             │
+          ▼                             ▼
+   ┌──────────────┐             ┌───────────────┐
+   │  Ciphertext  │             │   AES Key     │
+   │   (Stored)   │             │ RSA Encrypted │
+   └──────────────┘             └───────────────┘
+</pre>
+    </div>
+</div>
+
+<!-- Terminal Output Preview -->
+<div class="card" style="background: #1e1e1e; color: #10b981;">
+    <h4 style="color: #fff; margin-bottom: 1rem;"><i class="fas fa-terminal"></i> Terminal Output (On Upload)</h4>
+    <pre style="font-family: monospace; font-size: 12px; margin: 0;">
+============================================================
+RESUME UPLOAD for {{ current_user.username }}
+Filename: resume.pdf
+Original Size: 245,782 bytes
+Ciphertext Preview: Y4Xk+8dHjK2L9mN0pQr...
+IV: A1B2C3D4E5F6G7H8
+Resume is now AES-256 ENCRYPTED in database!
+============================================================
+    </pre>
 </div>
 {% endblock %}

@@ -5,21 +5,16 @@ import os
 app = create_app()
 
 def init_db():
-    if os.path.exists('site.db'):
-        os.remove('site.db') # clean start for testing
-        print("Removed existing DB.")
+    # Database is stored in instance/site.db
+    db_path = os.path.join('instance', 'site.db')
+    
+    if os.path.exists(db_path):
+        os.remove(db_path)
+        print("Removed existing database.")
         
     with app.app_context():
         db.create_all()
-        print("Created database tables.")
-        
-        # Optionally create a seed admin
-        # from app.security import hash_password
-        # admin = User(username='admin', email='admin@test.com', 
-        #              password_hash=hash_password('admin123'), role='Admin')
-        # db.session.add(admin)
-        # db.session.commit()
-        # print("Created admin user.")
+        print("Created fresh database tables.")
 
 if __name__ == '__main__':
     init_db()

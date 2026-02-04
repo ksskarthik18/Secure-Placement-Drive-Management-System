@@ -1,24 +1,50 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container" style="max-width: 600px;">
-    <div class="card">
-        <h2><i class="fas fa-briefcase"></i> Post a Job</h2>
-        <form method="POST">
-            <div class="form-group">
-                <label>Job Title</label>
-                <input type="text" name="title" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label>Company Name</label>
-                <input type="text" name="company" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label>Description</label>
-                <textarea name="description" class="form-control" rows="5" required></textarea>
-            </div>
-            <button type="submit" class="btn">Post Job</button>
-        </form>
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-plus-circle"></i> Post New Job</h1>
+        <p class="page-subtitle">Create a new placement drive opportunity</p>
     </div>
+    <a href="{{ url_for('hr.dashboard') }}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
+
+<div class="card" style="max-width: 700px; margin: 0 auto;">
+    <form method="POST">
+        <div class="form-group">
+            <label for="title"><i class="fas fa-heading"></i> Job Title</label>
+            <input type="text" id="title" name="title" class="form-control" placeholder="e.g., Software Engineer"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label for="company"><i class="fas fa-building"></i> Company Name</label>
+            <input type="text" id="company" name="company" class="form-control" placeholder="e.g., Google, Microsoft"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label for="description"><i class="fas fa-align-left"></i> Job Description</label>
+            <textarea id="description" name="description" class="form-control" rows="6"
+                placeholder="Enter job requirements, responsibilities, salary package, etc." required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem;">
+            <i class="fas fa-paper-plane"></i> Post Job
+        </button>
+    </form>
+</div>
+
+<!-- Info -->
+<div class="card" style="max-width: 700px; margin: 2rem auto; border-left: 4px solid var(--accent-blue);">
+    <h4><i class="fas fa-info-circle"></i> What Happens Next</h4>
+    <ul style="color: var(--text-secondary); font-size: 14px; padding-left: 1.5rem; margin: 0.5rem 0 0;">
+        <li>Students will see this job in their "Placement Drives" page</li>
+        <li>They can apply with their encrypted resume</li>
+        <li>You can review applicants and decrypt resumes</li>
+        <li>Publish digitally signed results after selection</li>
+    </ul>
 </div>
 {% endblock %}

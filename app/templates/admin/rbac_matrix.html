@@ -1,64 +1,181 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<a href="{{ url_for('admin.dashboard') }}">&larr; Back to Dashboard</a>
-<h2><i class="fas fa-th"></i> Access Control Matrix (RBAC)</h2>
-<p>This matrix defines the permissions for each role (Subject) on system resources (Objects).</p>
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-th"></i> Access Control Matrix</h1>
+        <p class="page-subtitle">Role-Based Access Control (RBAC) Permission Matrix</p>
+    </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
 
+<!-- Theory Card -->
+<div class="card" style="border-left: 4px solid var(--primary-500);">
+    <h3><i class="fas fa-info-circle"></i> About RBAC</h3>
+    <p style="color: var(--text-secondary); margin: 0.5rem 0;">
+        <strong>Role-Based Access Control (RBAC)</strong> restricts system access based on the roles assigned to users.
+        Each role has specific permissions, and users can only access resources permitted by their role.
+        This is enforced at the <strong>backend level</strong> using decorators.
+    </p>
+</div>
+
+<!-- Access Control Matrix -->
 <div class="card">
-    <table>
-        <thead>
-            <tr style="background: #2d3436; color: white;">
-                <th>Resource / Action</th>
-                <th>Student</th>
-                <th>Company HR</th>
-                <th>Placement Officer (Admin)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>View Jobs</strong></td>
-                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
-                <td><i class="fas fa-check" style="color: green;"></i> Allow (Own)</td>
-                <td><i class="fas fa-check" style="color: green;"></i> Allow (All)</td>
-            </tr>
-            <tr>
-                <td><strong>Apply for Job</strong></td>
-                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
-                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
-                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
-            </tr>
-            <tr>
-                <td><strong>Post Job</strong></td>
-                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
-                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
-                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
-            </tr>
-            <tr>
-                <td><strong>Upload Resume</strong></td>
-                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
-                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
-                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
-            </tr>
-            <tr>
-                <td><strong>View Resumes (Decryption)</strong></td>
-                <td><i class="fas fa-times" style="color: red;"></i> Deny (Own Only - planned)</td>
-                <td><i class="fas fa-check" style="color: green;"></i> Allow (Applicants)</td>
-                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
-            </tr>
-            <tr>
-                <td><strong>Publish Result (Sign)</strong></td>
-                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
-                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
-                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
-            </tr>
-            <tr>
-                <td><strong>View Hashes / Admin Panel</strong></td>
-                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
-                <td><i class="fas fa-times" style="color: red;"></i> Deny</td>
-                <td><i class="fas fa-check" style="color: green;"></i> Allow</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="card-header">
+        <h2 class="card-title"><i class="fas fa-table"></i> Permission Matrix</h2>
+    </div>
+
+    <div class="table-container">
+        <table class="matrix-table">
+            <thead>
+                <tr>
+                    <th style="text-align: left;">Resource / Action</th>
+                    <th>
+                        <span class="role-badge student" style="font-size: 11px;">
+                            <i class="fas fa-user-graduate"></i> Student
+                        </span>
+                    </th>
+                    <th>
+                        <span class="role-badge hr" style="font-size: 11px;">
+                            <i class="fas fa-building"></i> HR
+                        </span>
+                    </th>
+                    <th>
+                        <span class="role-badge admin" style="font-size: 11px;">
+                            <i class="fas fa-crown"></i> Admin
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>View Dashboard</th>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                </tr>
+                <tr>
+                    <th>Upload Resume (Encrypted)</th>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                </tr>
+                <tr>
+                    <th>View Job Listings</th>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                </tr>
+                <tr>
+                    <th>Apply for Jobs</th>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                </tr>
+                <tr>
+                    <th>Post/Create Jobs</th>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                </tr>
+                <tr>
+                    <th>Decrypt Resumes</th>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                </tr>
+                <tr>
+                    <th>Publish Results (Signed)</th>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                </tr>
+                <tr>
+                    <th>View Own Results</th>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                </tr>
+                <tr>
+                    <th>View All Users</th>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                </tr>
+                <tr>
+                    <th>View Password Hashes</th>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                </tr>
+                <tr>
+                    <th>Access Security Demo Pages</th>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                </tr>
+                <tr>
+                    <th>Verify Digital Signatures</th>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                    <td class="permission-no"><i class="fas fa-times-circle"></i> No</td>
+                    <td class="permission-yes"><i class="fas fa-check-circle"></i> Yes</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Implementation -->
+<div class="card">
+    <h3><i class="fas fa-code"></i> Implementation: @role_required Decorator</h3>
+    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+        Access control is enforced at the backend using a custom decorator:
+    </p>
+    <div class="code-block">
+        <span style="color: #10b981;">@login_required</span>
+        <span style="color: #f59e0b;">@role_required('Admin')</span> <span style="color: #6b7280;"># Only Admin can
+            access</span>
+        <span style="color: #60a5fa;">def</span> <span style="color: #f472b6;">dashboard</span>():
+        <span style="color: #6b7280;"># This route is protected</span>
+        <span style="color: #60a5fa;">return</span> render_template(<span
+            style="color: #34d399;">'admin/dashboard.html'</span>)
+    </div>
+
+    <div style="margin-top: 1.5rem;">
+        <h4><i class="fas fa-shield-alt"></i> Access Denied Response</h4>
+        <p style="color: var(--text-secondary); font-size: 14px;">
+            If a user tries to access a resource without proper authorization, they receive a <strong>403
+                Forbidden</strong> response.
+        </p>
+    </div>
+</div>
+
+<!-- Policy Explanation -->
+<div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="card" style="border-top: 4px solid #3b82f6;">
+        <h4><i class="fas fa-user-graduate" style="color: #3b82f6;"></i> Student Policy</h4>
+        <p style="color: var(--text-secondary); font-size: 13px;">
+            Students can only manage their own resumes and applications. They can view verified results but cannot
+            modify any data.
+        </p>
+    </div>
+
+    <div class="card" style="border-top: 4px solid #8b5cf6;">
+        <h4><i class="fas fa-building" style="color: #8b5cf6;"></i> HR Policy</h4>
+        <p style="color: var(--text-secondary); font-size: 13px;">
+            HRs can post jobs, view/decrypt resumes of applicants, and publish signed results. They cannot access admin
+            functions.
+        </p>
+    </div>
+
+    <div class="card" style="border-top: 4px solid #ef4444;">
+        <h4><i class="fas fa-crown" style="color: #ef4444;"></i> Admin Policy</h4>
+        <p style="color: var(--text-secondary); font-size: 13px;">
+            Admins have full access to user management, security demo pages, and can verify all signatures and view
+            hashes.
+        </p>
+    </div>
 </div>
 {% endblock %}

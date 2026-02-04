@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-flask"></i> Encryption Lab</h1>
+        <p class="page-subtitle">Learn how AES-256 encryption works</p>
+    </div>
+    <a href="{{ url_for('student.dashboard') }}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
+
+<!-- Theory Card -->
+<div class="card" style="border-left: 4px solid var(--accent-purple);">
+    <h3><i class="fas fa-graduation-cap"></i> Understanding Encryption</h3>
+    <p style="color: var(--text-secondary); margin: 0.5rem 0;">
+        Encryption transforms readable data (plaintext) into unreadable format (ciphertext) using a secret key.
+        Only those with the correct key can decrypt and read the original data.
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="fas fa-key"></i>
+            </div>
+            <div class="stat-content">
+                <h4 style="margin:0;">AES-256</h4>
+                <p style="font-size: 12px;">256-bit symmetric key</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="fas fa-lock"></i>
+            </div>
+            <div class="stat-content">
+                <h4 style="margin:0;">RSA-2048</h4>
+                <p style="font-size: 12px;">Asymmetric key exchange</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Interactive Demo -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title"><i class="fas fa-cogs"></i> Try It Yourself</h2>
+    </div>
+
+    <form method="POST">
+        <div class="form-group">
+            <label for="data"><i class="fas fa-keyboard"></i> Enter Text to Encrypt:</label>
+            <input type="text" id="data" name="data" class="form-control" placeholder="e.g., My secret message!"
+                value="{{ result.original if result else '' }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-lock"></i> Encrypt
+        </button>
+    </form>
+</div>
+
+{% if result %}
+<!-- Results -->
+<div class="card slide-up" style="border-top: 4px solid var(--accent-green);">
+    <h3><i class="fas fa-check-circle" style="color: var(--accent-green);"></i> Encryption Results</h3>
+
+    <div class="form-group">
+        <label><span class="badge badge-info">Input</span> Original Plaintext</label>
+        <div class="code-block">{{ result.original }}</div>
+    </div>
+
+    <div class="form-group">
+        <label><span class="security-badge encrypted"><i class="fas fa-lock"></i> Output</span> Ciphertext
+            (Base64)</label>
+        <div class="code-block" style="word-break: break-all; font-size: 11px;">{{ result.ciphertext }}</div>
+    </div>
+
+    <div class="form-group">
+        <label><span class="badge badge-warning">IV</span> Initialization Vector</label>
+        <div class="code-block">{{ result.iv }}</div>
+        <small style="color: var(--text-muted);">Random value ensuring same plaintext produces different
+            ciphertext</small>
+    </div>
+
+    <hr style="border-color: var(--border-color);">
+
+    <div class="form-group">
+        <label><span class="badge badge-success">Decrypted</span> Result (Server-side)</label>
+        <div class="code-block" style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-green);">{{
+            result.decrypted }}</div>
+    </div>
+
+    <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <strong>Success!</strong> Your data was encrypted and can only be decrypted with the server's private RSA key.
+    </div>
+</div>
+{% endif %}
+
+<!-- How It's Used -->
+<div class="card">
+    <h3><i class="fas fa-file-alt"></i> How This Protects Your Resume</h3>
+    <ul style="color: var(--text-secondary); font-size: 14px; padding-left: 1.5rem;">
+        <li>When you upload a resume, it's encrypted using AES-256</li>
+        <li>The AES key is then encrypted using RSA-2048</li>
+        <li>Only authorized HR can decrypt using the server's private RSA key</li>
+        <li>Even if database is compromised, resume content remains protected</li>
+    </ul>
+</div>
+{% endblock %}
