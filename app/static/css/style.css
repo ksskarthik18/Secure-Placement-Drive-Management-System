@@ -21,6 +21,7 @@
     /* Slate 800 */
     --text-muted: #64748b;
     /* Slate 500 */
+    --text-secondary: #64748b;
 
     /* Status Colors (Muted Professional) */
     --success-bg: #dcfce7;
@@ -53,6 +54,7 @@
 
     --text-main: #f1f5f9;
     --text-muted: #94a3b8;
+    --text-secondary: #94a3b8;
 
     --border-color: #334155;
 

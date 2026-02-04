@@ -81,6 +81,20 @@
 
     <!-- Theme Toggle Script -->
     <script>
+        // Auto-dismiss Flash Messages (2.5s)
+        window.addEventListener('load', () => {
+            const alerts = document.querySelectorAll('.alert');
+            if (alerts.length > 0) {
+                alerts.forEach(alert => {
+                    setTimeout(() => {
+                        alert.style.transition = 'opacity 0.5s ease-out';
+                        alert.style.opacity = '0';
+                        setTimeout(() => { alert.remove(); }, 500);
+                    }, 2500);
+                });
+            }
+        });
+
         const toggle = document.getElementById('theme-toggle');
         const icon = toggle.querySelector('i');
         const body = document.body;
